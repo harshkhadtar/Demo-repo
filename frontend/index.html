@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="app_title">Public Issue Reporting</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+</head>
+
+<body>
+
+  <!-- Top App Bar -->
+  <header class="top-app-bar">
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <span class="material-symbols-outlined"
+        style="color: var(--md-sys-color-primary); font-size: 32px;">account_balance</span>
+      <h1 data-i18n="app_title">Public Issue Reporting</h1>
+    </div>
+    <div class="app-bar-actions">
+      <select id="language-select">
+        <option value="en">English</option>
+        <option value="mr">मराठी</option>
+      </select>
+      <a href="login.html" class="btn-primary" id="login-btn">
+        <span class="material-symbols-outlined">login</span>
+        <span data-i18n="sign_in">Sign In</span>
+      </a>
+      <button class="btn-secondary" id="logout-btn" style="display: none;">
+        <span class="material-symbols-outlined">logout</span>
+        <span data-i18n="logout">Log Out</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="container">
+    <section style="text-align: center; margin-bottom: 40px;">
+      <h2 data-i18n="welcome" style="margin-bottom: 8px;">Welcome to Lonere Grampanchayat Services</h2>
+      <p class="body-large" style="color: var(--md-sys-color-on-surface-variant);" data-i18n="subtitle">Report and track
+        civic issues easily.</p>
+    </section>
+
+    <!-- Dashboard Preview Cards -->
+    <section style="margin-bottom: 40px;">
+      <h3 data-i18n="categories" style="margin-bottom: 16px;">Categories</h3>
+      <div class="grid-2">
+        <div class="md-card">
+          <span class="material-symbols-outlined"
+            style="font-size: 40px; color: var(--md-sys-color-primary);">cleaning_services</span>
+          <h4 data-i18n="cleanliness">Cleanliness Issues</h4>
+          <p class="caption">Report garbage, drainage, and waste collection issues.</p>
+        </div>
+        <div class="md-card">
+          <span class="material-symbols-outlined"
+            style="font-size: 40px; color: var(--md-sys-color-primary);">edit_road</span>
+          <h4 data-i18n="roads">Road Problems</h4>
+          <p class="caption">Report potholes, broken pavements, and street light issues.</p>
+        </div>
+        <div class="md-card">
+          <span class="material-symbols-outlined"
+            style="font-size: 40px; color: var(--md-sys-color-primary);">restaurant</span>
+          <h4 data-i18n="food">Food Safety</h4>
+          <p class="caption">Report unhygienic shops or adulteration.</p>
+        </div>
+        <div class="md-card">
+          <span class="material-symbols-outlined"
+            style="font-size: 40px; color: var(--md-sys-color-primary);">park</span>
+          <h4 data-i18n="gardens">Public Gardens</h4>
+          <p class="caption">Report damaged equipment or lack of maintenance.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recent Works Gallery -->
+    <section>
+      <h3 data-i18n="recent_works" style="margin-bottom: 16px;">Completed Works</h3>
+      <div class="horizontal-scroll" id="recent-works-container">
+        <!-- Fetched via JS, mocked for now -->
+        <div class="md-card">
+          <img src="https://via.placeholder.com/260x140?text=Road+Repair" alt="Road Repair"
+            style="border-radius: 8px; width: 100%; object-fit: cover;">
+          <h4>Main Road Potholes Filled</h4>
+          <div class="chip completed" data-i18n="status_completed">Completed</div>
+        </div>
+        <div class="md-card">
+          <img src="https://via.placeholder.com/260x140?text=Drainage+Cleaning" alt="Drainage Cleaning"
+            style="border-radius: 8px; width: 100%; object-fit: cover;">
+          <h4>Market Area Drainage Cleared</h4>
+          <div class="chip completed" data-i18n="status_completed">Completed</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- User specific section (hidden when logged out) -->
+    <section id="user-section" style="display: none; margin-top: 40px;">
+      <h3 data-i18n="hello">Hello</h3><span id="user-name"></span>
+      <br><br>
+      <a href="complaint.html" class="btn-primary" style="margin-bottom: 24px;">
+        <span class="material-symbols-outlined">add</span>
+        <span data-i18n="raise_complaint">Raise Complaint</span>
+      </a>
+
+      <h3 data-i18n="my_complaints" style="margin-bottom: 16px;">My Complaints</h3>
+      <div id="my-complaints-list" class="grid-2">
+        <!-- List populated by JS -->
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item active">
+      <div class="icon-container"><span class="material-symbols-outlined">home</span></div>
+      <span data-i18n="home">Home</span>
+    </a>
+    <a href="complaint.html" class="nav-item">
+      <div class="icon-container"><span class="material-symbols-outlined">report</span></div>
+      <span data-i18n="complaint">Complaint</span>
+    </a>
+    <a href="announcements.html" class="nav-item">
+      <div class="icon-container"><span class="material-symbols-outlined">explore</span></div>
+      <span data-i18n="explore">Explore</span>
+    </a>
+    <a href="data.html" class="nav-item">
+      <div class="icon-container"><span class="material-symbols-outlined">analytics</span></div>
+      <span data-i18n="data">Data</span>
+    </a>
+  </nav>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (user) {
+        document.getElementById('login-btn').style.display = 'none';
+        document.getElementById('logout-btn').style.display = 'inline-flex';
+        document.getElementById('user-section').style.display = 'block';
+        document.getElementById('user-name').textContent = ', ' + user.name;
+        loadMyComplaints();
+      }
+
+      document.getElementById('logout-btn').addEventListener('click', () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.reload();
+      });
+    });
+  </script>
+</body>
+
+</html>

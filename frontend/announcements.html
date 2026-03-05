@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Announcements - Public Issue Reporting</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+</head>
+
+<body>
+    <header class="top-app-bar">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <span class="material-symbols-outlined"
+                style="color: var(--md-sys-color-primary); font-size: 32px;">campaign</span>
+            <h1 data-i18n="explore">Explore Announcements</h1>
+        </div>
+        <div class="app-bar-actions">
+            <select id="language-select">
+                <option value="en">English</option>
+                <option value="mr">मराठी</option>
+            </select>
+        </div>
+    </header>
+
+    <main class="container">
+        <div style="max-width: 800px; margin: 0 auto;" id="announcements-feed">
+            <!-- Loaded via JS -->
+            <p style="text-align:center; color: var(--md-sys-color-on-surface-variant);">Loading announcements...</p>
+        </div>
+    </main>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <div class="icon-container"><span class="material-symbols-outlined">home</span></div>
+            <span data-i18n="home">Home</span>
+        </a>
+        <a href="complaint.html" class="nav-item">
+            <div class="icon-container"><span class="material-symbols-outlined">report</span></div>
+            <span data-i18n="complaint">Complaint</span>
+        </a>
+        <a href="announcements.html" class="nav-item active">
+            <div class="icon-container"><span class="material-symbols-outlined">explore</span></div>
+            <span data-i18n="explore">Explore</span>
+        </a>
+        <a href="data.html" class="nav-item">
+            <div class="icon-container"><span class="material-symbols-outlined">analytics</span></div>
+            <span data-i18n="data">Data</span>
+        </a>
+    </nav>
+
+    <script src="js/i18n.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('http://localhost:5000/api/announcements');
+                const announcements = await response.json();
+                const feed = document.getElementById('announcements-feed');
+                feed.innerHTML = '';
+
+                if (announcements.length === 0) {
+                    feed.innerHTML = '<p style="text-align:center;">No announcements right now.</p>';
+                    return;
+                }
+
+                announcements.forEach(a => {
+                    const date = new Date(a.created_at).toLocaleDateString();
+                    feed.innerHTML += `
+            <div class="md-card" style="margin-bottom: 24px;">
+              ${a.media_url ? `<img src="http://localhost:5000${a.media_url}" style="width: 100%; border-radius: 8px; max-height: 400px; object-fit: cover;">` : ''}
+              <h3>${a.title}</h3>
+              <p class="caption">${date}</p>
+              <p style="margin-top: 8px; white-space: pre-wrap;">${a.body}</p>
+            </div>
+          `;
+                });
+            } catch (error) {
+                document.getElementById('announcements-feed').innerHTML = '<p style="text-align:center;">Failed to load announcements.</p>';
+            }
+        });
+    </script>
+</body>
+
+</html>

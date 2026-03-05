@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raise Complaint - Public Issue Reporting</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+</head>
+
+<body>
+    <header class="top-app-bar">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <a href="index.html" style="color: inherit; text-decoration: none; display: flex; align-items: center;">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </a>
+            <h1 data-i18n="raise_complaint">Raise Complaint</h1>
+        </div>
+        <div class="app-bar-actions">
+            <select id="language-select">
+                <option value="en">English</option>
+                <option value="mr">मराठी</option>
+            </select>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="md-card" style="max-width: 600px; margin: 0 auto;">
+            <form id="complaint-form">
+                <div class="form-group">
+                    <label for="title">Issue Name</label>
+                    <input type="text" id="title" class="form-control" required placeholder="Short title of the issue">
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" class="form-control" required>
+                        <option value="">Select Category</option>
+                        <option value="Cleanliness">Cleanliness</option>
+                        <option value="Roads">Roads & Potholes</option>
+                        <option value="Food Safety">Food Safety</option>
+                        <option value="Public Gardens">Public Gardens</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Location / Address</label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span class="material-symbols-outlined"
+                            style="color: var(--md-sys-color-primary);">location_on</span>
+                        <input type="text" id="location" class="form-control" style="flex: 1;" required
+                            placeholder="Enter exact location">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" class="form-control" rows="4" required
+                        placeholder="Detailed description of the problem..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="image">Attach Image (Optional)</label>
+                    <input type="file" id="image" class="form-control" accept="image/*">
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 16px; padding: 16px;">
+                    <span class="material-symbols-outlined">send</span>
+                    <span>Submit Complaint</span>
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <div class="icon-container"><span class="material-symbols-outlined">home</span></div>
+            <span data-i18n="home">Home</span>
+        </a>
+        <a href="complaint.html" class="nav-item active">
+            <div class="icon-container"><span class="material-symbols-outlined">report</span></div>
+            <span data-i18n="complaint">Complaint</span>
+        </a>
+        <a href="announcements.html" class="nav-item">
+            <div class="icon-container"><span class="material-symbols-outlined">explore</span></div>
+            <span data-i18n="explore">Explore</span>
+        </a>
+        <a href="data.html" class="nav-item">
+            <div class="icon-container"><span class="material-symbols-outlined">analytics</span></div>
+            <span data-i18n="data">Data</span>
+        </a>
+    </nav>
+
+    <script src="js/i18n.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!localStorage.getItem('token')) {
+                alert('You must be signed in to raise a complaint.');
+                window.location.href = 'login.html';
+            }
+        });
+
+        document.getElementById('complaint-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const token = localStorage.getItem('token');
+
+            const formData = new FormData();
+            formData.append('title', document.getElementById('title').value);
+            formData.append('category', document.getElementById('category').value);
+            formData.append('location', document.getElementById('location').value);
+            formData.append('description', document.getElementById('description').value);
+
+            const imageFile = document.getElementById('image').files[0];
+            if (imageFile) {
+                formData.append('image', imageFile);
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/complaints', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert('Complaint submitted successfully!');
+                    window.location.href = 'index.html';
+                } else {
+                    alert('Failed to submit: ' + data.message);
+                }
+            } catch (error) {
+                alert('Server error.');
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Public Issue Reporting</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+    <style>
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+
+        .admin-table th,
+        .admin-table td {
+            border-bottom: 1px solid var(--md-sys-color-outline-variant);
+            padding: 12px 16px;
+            text-align: left;
+        }
+
+        .admin-table th {
+            background-color: var(--md-sys-color-surface-variant);
+            color: var(--md-sys-color-on-surface-variant);
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .admin-table tr:hover {
+            background-color: var(--md-sys-color-surface-variant);
+        }
+    </style>
+</head>
+
+<body>
+    <header class="top-app-bar">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <span class="material-symbols-outlined"
+                style="color: var(--md-sys-color-primary); font-size: 32px;">shield</span>
+            <h1>Admin Dashboard</h1>
+        </div>
+        <div class="app-bar-actions">
+            <button class="btn-secondary" id="logout-btn">
+                <span class="material-symbols-outlined">logout</span>
+                <span>Log Out</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="container">
+        <section style="margin-bottom: 40px;">
+            <h2>Lonere Grampanchayat Complaint Overview</h2>
+
+            <div class="grid-2" style="margin-top: 24px; margin-bottom: 24px;">
+                <div class="md-card">
+                    <h3 style="margin-bottom: 16px;">Status Overview</h3>
+                    <canvas id="statusChart" width="400" height="200"></canvas>
+                </div>
+                <div class="md-card" style="display: flex; flex-direction: column; justify-content: center; gap: 16px;">
+                    <div
+                        style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--md-sys-color-outline-variant);">
+                        <span>Total Complaints</span> <strong id="stat-total">0</strong>
+                    </div>
+                    <div
+                        style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--md-sys-color-outline-variant); color: #E65100;">
+                        <span>Pending</span> <strong id="stat-pending">0</strong>
+                    </div>
+                    <div
+                        style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--md-sys-color-outline-variant); color: #1565C0;">
+                        <span>In Progress</span> <strong id="stat-inprogress">0</strong>
+                    </div>
+                    <div
+                        style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--md-sys-color-outline-variant); color: #2E7D32;">
+                        <span>Completed</span> <strong id="stat-completed">0</strong>
+                    </div>
+                    <div
+                        style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--md-sys-color-outline-variant); color: #C62828;">
+                        <span>Rejected</span> <strong id="stat-rejected">0</strong>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h2>All Complaints Table</h2>
+            </div>
+            <div class="md-card" style="overflow-x: auto;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>User</th>
+                            <th>Title / Category</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-complaints-list">
+                        <!-- Populated via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section>
+            <h2>Post Announcement</h2>
+            <div class="md-card" style="margin-top: 16px;">
+                <form id="announcement-form">
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" id="ann-title" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea id="ann-body" class="form-control" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Post Announcement</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        let statusChartInstance = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || user.role !== 'admin') {
+                alert('Unauthorized access.');
+                window.location.href = 'index.html';
+                return;
+            }
+            loadAllComplaints();
+
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = 'index.html';
+            });
+        });
+
+        async function loadAllComplaints() {
+            try {
+                const response = await fetch('http://localhost:5000/api/complaints/all', {
+                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+                });
+                const complaints = await response.json();
+
+                let pending = 0, inprogress = 0, completed = 0, rejected = 0;
+
+                const tbody = document.getElementById('admin-complaints-list');
+                tbody.innerHTML = '';
+
+                complaints.forEach(c => {
+                    let statusClass = 'pending';
+                    if (c.status === 'Pending') pending++;
+                    if (c.status === 'In Progress') { statusClass = 'in-progress'; inprogress++; }
+                    if (c.status === 'Completed') { statusClass = 'completed'; completed++; }
+                    if (c.status === 'Rejected') { statusClass = 'rejected'; rejected++; }
+
+                    tbody.innerHTML += `
+            <tr>
+              <td>#${c.id}</td>
+              <td>${c.user_name}<br><small>${c.user_email}</small></td>
+              <td><strong>${c.title}</strong><br><small>${c.category}</small></td>
+              <td>${c.location}</td>
+              <td>
+                <select onchange="updateStatus(${c.id}, this.value)" class="form-control" style="padding: 4px 8px;">
+                  <option value="Pending" ${c.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                  <option value="In Progress" ${c.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
+                  <option value="Completed" ${c.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                  <option value="Rejected" ${c.status === 'Rejected' ? 'selected' : ''}>Rejected</option>
+                </select>
+              </td>
+              <td>
+                <a href="${c.image_url ? 'http://localhost:5000' + c.image_url : '#'}" target="_blank" class="btn-secondary" style="padding: 4px 12px; font-size: 12px;">View Image</a>
+              </td>
+            </tr>
+          `;
+                });
+
+                document.getElementById('stat-total').textContent = complaints.length;
+                document.getElementById('stat-pending').textContent = pending;
+                document.getElementById('stat-inprogress').textContent = inprogress;
+                document.getElementById('stat-completed').textContent = completed;
+                document.getElementById('stat-rejected').textContent = rejected;
+
+                updateChart(pending, inprogress, completed, rejected);
+
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        function updateChart(pending, inprogress, completed, rejected) {
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            if (statusChartInstance) {
+                statusChartInstance.destroy();
+            }
+            statusChartInstance = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Pending', 'In Progress', 'Completed', 'Rejected'],
+                    datasets: [{
+                        data: [pending, inprogress, completed, rejected],
+                        backgroundColor: ['#FF9800', '#2196F3', '#4CAF50', '#F44336']
+                    }]
+                }
+            });
+        }
+        async function updateStatus(id, newStatus) {
+            if (!confirm('Change status to ' + newStatus + '?')) return loadAllComplaints();
+
+            try {
+                const res = await fetch(`http://localhost:5000/api/complaints/${id}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    },
+                    body: JSON.stringify({ status: newStatus })
+                });
+                if (res.ok) {
+                    alert('Status updated');
+                } else {
+                    alert('Failed to update status');
+                    loadAllComplaints();
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        document.getElementById('announcement-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('ann-title').value;
+            const body = document.getElementById('ann-body').value;
+
+            try {
+                const formData = new FormData();
+                formData.append('title', title);
+                formData.append('body', body);
+
+                const res = await fetch('http://localhost:5000/api/announcements', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    },
+                    body: formData
+                });
+
+                if (res.ok) {
+                    alert('Announcement posted');
+                    e.target.reset();
+                }
+            } catch (err) {
+                alert('Error posting announcement');
+            }
+        });
+    </script>
+</body>
+
+</html>
