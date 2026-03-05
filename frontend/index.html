@@ -5,6 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="app_title">Public Issue Reporting</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
 </head>
@@ -12,11 +15,11 @@
 <body>
 
   <!-- Top App Bar -->
-  <header class="top-app-bar">
+  <header class="top-app-bar" style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
     <div style="display: flex; align-items: center; gap: 12px;">
       <span class="material-symbols-outlined"
         style="color: var(--md-sys-color-primary); font-size: 32px;">account_balance</span>
-      <h1 data-i18n="app_title">Public Issue Reporting</h1>
+      <h1 data-i18n="app_title" style="color: #111827; font-weight: 600;">Public Issue Reporting</h1>
     </div>
     <div class="app-bar-actions">
       <select id="language-select">
@@ -36,60 +39,66 @@
 
   <!-- Main Content -->
   <main class="container">
-    <section style="text-align: center; margin-bottom: 40px;">
-      <h2 data-i18n="welcome" style="margin-bottom: 8px;">Welcome to Lonere Grampanchayat Services</h2>
-      <p class="body-large" style="color: var(--md-sys-color-on-surface-variant);" data-i18n="subtitle">Report and track
-        civic issues easily.</p>
+    <section
+      style="text-align: center; margin-bottom: 40px; background-color: var(--md-sys-color-surface); padding: 48px 24px; border-radius: var(--md-sys-shape-corner-large); box-shadow: var(--md-sys-elevation-1);">
+      <h2 data-i18n="welcome" style="margin-bottom: 12px; font-weight: 600; color: var(--md-sys-color-primary);">Welcome
+        to Lonere Grampanchayat Services</h2>
+      <p class="body-large" style="color: var(--md-sys-color-on-surface-variant); max-width: 600px; margin: 0 auto;"
+        data-i18n="subtitle">Report and track civic issues easily.</p>
     </section>
 
-    <!-- Dashboard Preview Cards -->
-    <section style="margin-bottom: 40px;">
-      <h3 data-i18n="categories" style="margin-bottom: 16px;">Categories</h3>
-      <div class="grid-2">
-        <div class="md-card">
-          <span class="material-symbols-outlined"
-            style="font-size: 40px; color: var(--md-sys-color-primary);">cleaning_services</span>
-          <h4 data-i18n="cleanliness">Cleanliness Issues</h4>
-          <p class="caption">Report garbage, drainage, and waste collection issues.</p>
-        </div>
-        <div class="md-card">
-          <span class="material-symbols-outlined"
-            style="font-size: 40px; color: var(--md-sys-color-primary);">edit_road</span>
-          <h4 data-i18n="roads">Road Problems</h4>
-          <p class="caption">Report potholes, broken pavements, and street light issues.</p>
-        </div>
-        <div class="md-card">
-          <span class="material-symbols-outlined"
-            style="font-size: 40px; color: var(--md-sys-color-primary);">restaurant</span>
-          <h4 data-i18n="food">Food Safety</h4>
-          <p class="caption">Report unhygienic shops or adulteration.</p>
-        </div>
-        <div class="md-card">
-          <span class="material-symbols-outlined"
-            style="font-size: 40px; color: var(--md-sys-color-primary);">park</span>
-          <h4 data-i18n="gardens">Public Gardens</h4>
-          <p class="caption">Report damaged equipment or lack of maintenance.</p>
+    <!-- Interactive Carousel / Slideshow -->
+    <section class="carousel-container">
+      <div class="carousel-slide active fade">
+        <img
+          src="https://images.unsplash.com/photo-1510041477799-a6755fb0801f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+          alt="Road Repair Work">
+        <div class="carousel-overlay">
+          <h3 class="carousel-caption">Road Repair Work</h3>
         </div>
       </div>
-    </section>
 
-    <!-- Recent Works Gallery -->
-    <section>
-      <h3 data-i18n="recent_works" style="margin-bottom: 16px;">Completed Works</h3>
-      <div class="horizontal-scroll" id="recent-works-container">
-        <!-- Fetched via JS, mocked for now -->
-        <div class="md-card">
-          <img src="https://via.placeholder.com/260x140?text=Road+Repair" alt="Road Repair"
-            style="border-radius: 8px; width: 100%; object-fit: cover;">
-          <h4>Main Road Potholes Filled</h4>
-          <div class="chip completed" data-i18n="status_completed">Completed</div>
+      <div class="carousel-slide fade">
+        <img
+          src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+          alt="Village Cleanliness Drive">
+        <div class="carousel-overlay">
+          <h3 class="carousel-caption">Village Cleanliness Drive</h3>
         </div>
-        <div class="md-card">
-          <img src="https://via.placeholder.com/260x140?text=Drainage+Cleaning" alt="Drainage Cleaning"
-            style="border-radius: 8px; width: 100%; object-fit: cover;">
-          <h4>Market Area Drainage Cleared</h4>
-          <div class="chip completed" data-i18n="status_completed">Completed</div>
+      </div>
+
+      <div class="carousel-slide fade">
+        <img
+          src="https://images.unsplash.com/photo-1582214693156-82ae8c843e93?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+          alt="Drainage Cleaning">
+        <div class="carousel-overlay">
+          <h3 class="carousel-caption">Drainage Cleaning</h3>
         </div>
+      </div>
+
+      <div class="carousel-slide fade">
+        <img
+          src="https://images.unsplash.com/photo-1595015560128-4ce312b32231?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+          alt="Public Garden Maintenance">
+        <div class="carousel-overlay">
+          <h3 class="carousel-caption">Public Garden Maintenance</h3>
+        </div>
+      </div>
+
+      <!-- Navigation Arrows -->
+      <button class="carousel-btn prev" onclick="changeSlide(-1)">
+        <span class="material-symbols-outlined">chevron_left</span>
+      </button>
+      <button class="carousel-btn next" onclick="changeSlide(1)">
+        <span class="material-symbols-outlined">chevron_right</span>
+      </button>
+
+      <!-- Dots -->
+      <div class="carousel-indicators">
+        <span class="dot active" onclick="currentSlide(1)"></span>
+        <span class="dot" onclick="currentSlide(2)"></span>
+        <span class="dot" onclick="currentSlide(3)"></span>
+        <span class="dot" onclick="currentSlide(4)"></span>
       </div>
     </section>
 
@@ -146,7 +155,59 @@
         localStorage.removeItem('user');
         window.location.reload();
       });
+
+      // Carousel Initialization
+      initCarousel();
     });
+
+    let slideIndex = 1;
+    let slideTimer;
+
+    function initCarousel() {
+      // Small timeout to ensure elements are rendered
+      setTimeout(() => {
+        showSlides(slideIndex);
+        startAutoSlide();
+      }, 100);
+    }
+
+    function changeSlide(n) {
+      clearInterval(slideTimer);
+      showSlides(slideIndex += n);
+      startAutoSlide();
+    }
+
+    function currentSlide(n) {
+      clearInterval(slideTimer);
+      showSlides(slideIndex = n);
+      startAutoSlide();
+    }
+
+    function showSlides(n) {
+      let i;
+      let slides = document.getElementsByClassName("carousel-slide");
+      let dots = document.getElementsByClassName("dot");
+      if (!slides.length) return;
+
+      if (n > slides.length) { slideIndex = 1 }
+      if (n < 1) { slideIndex = slides.length }
+
+      for (i = 0; i < slides.length; i++) {
+        slides[i].className = slides[i].className.replace(" active", "");
+      }
+      for (i = 0; i < dots.length; i++) {
+        dots[i].className = dots[i].className.replace(" active", "");
+      }
+
+      slides[slideIndex - 1].className += " active";
+      dots[slideIndex - 1].className += " active";
+    }
+
+    function startAutoSlide() {
+      slideTimer = setInterval(function () {
+        showSlides(slideIndex += 1);
+      }, 4000); // Auto slide every 4 seconds
+    }
   </script>
 </body>
 
