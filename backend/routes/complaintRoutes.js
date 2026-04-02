@@ -13,5 +13,6 @@ router.get('/all', complaintController.getAllComplaints);
 
 // Admin routes
 router.patch('/:id/status', verifyToken, isAdmin, complaintController.updateComplaintStatus);
+router.delete('/:id', verifyToken, isAdmin, complaintController.deleteComplaint);
 
 module.exports = router;

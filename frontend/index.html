@@ -4,120 +4,116 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title data-i18n="app_title">Public Issue Reporting</title>
+  <title>Lonere Grampanchayat – Public Issue Reporting</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-  <!-- Top App Bar -->
-  <header class="top-app-bar" style="background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-    <div style="display: flex; align-items: center; gap: 12px;">
-      <span class="material-symbols-outlined"
-        style="color: var(--md-sys-color-primary); font-size: 32px;">account_balance</span>
-      <h1 data-i18n="app_title" style="color: #111827; font-weight: 600;">Public Issue Reporting</h1>
+  <!-- ── HEADER ── -->
+  <header class="top-app-bar">
+    <div class="app-bar-brand">
+      <div class="app-bar-icon">
+        <span class="material-symbols-outlined">account_balance</span>
+      </div>
+      <h1 data-i18n="app_title">Public Issue Reporting</h1>
     </div>
     <div class="app-bar-actions">
       <select id="language-select">
         <option value="en">English</option>
         <option value="mr">मराठी</option>
       </select>
-      <a href="login.html" class="btn-primary" id="login-btn">
-        <span class="material-symbols-outlined">login</span>
+      <a href="login.html" class="btn-primary" id="login-btn" style="padding:8px 18px; font-size:.8125rem;">
+        <span class="material-symbols-outlined" style="font-size:18px;">login</span>
         <span data-i18n="sign_in">Sign In</span>
       </a>
-      <button class="btn-secondary" id="logout-btn" style="display: none;">
-        <span class="material-symbols-outlined">logout</span>
-        <span data-i18n="logout">Log Out</span>
+      <button class="btn-ghost" id="logout-btn" style="display:none;">
+        <span class="material-symbols-outlined" style="font-size:18px;">logout</span>
+        <span>Log Out</span>
       </button>
     </div>
   </header>
 
-  <!-- Main Content -->
+  <!-- ── MAIN ── -->
   <main class="container">
-    <section
-      style="text-align: center; margin-bottom: 40px; background-color: var(--md-sys-color-surface); padding: 48px 24px; border-radius: var(--md-sys-shape-corner-large); box-shadow: var(--md-sys-elevation-1);">
-      <h2 data-i18n="welcome" style="margin-bottom: 12px; font-weight: 600; color: var(--md-sys-color-primary);">Welcome
-        to Lonere Grampanchayat Services</h2>
-      <p class="body-large" style="color: var(--md-sys-color-on-surface-variant); max-width: 600px; margin: 0 auto;"
-        data-i18n="subtitle">Report and track civic issues easily.</p>
-    </section>
 
-    <!-- Interactive Carousel / Slideshow -->
-    <section class="carousel-container">
-      <div class="carousel-slide active fade">
-        <img
-          src="https://images.unsplash.com/photo-1510041477799-a6755fb0801f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-          alt="Road Repair Work">
-        <div class="carousel-overlay">
-          <h3 class="carousel-caption">Road Repair Work</h3>
+    <!-- ── HERO ── -->
+    <section class="hero animate-fadeup">
+      <div class="hero-text">
+        <div class="hero-tag">
+          <span class="material-symbols-outlined" style="font-size:14px;">verified</span>
+          <span data-i18n="hero_tag">Official Grampanchayat Portal</span>
+        </div>
+        <h2 class="hero-title">
+          <span data-i18n="hero_title">Welcome to Lonere Grampanchayat Services</span>
+        </h2>
+        <p class="hero-desc" data-i18n="hero_desc">Report local civic issues, track their resolution, and stay updated with village announcements — all in one place.</p>
+        <div class="hero-actions">
+          <a href="complaint.html" class="btn-primary" id="hero-report-btn">
+            <span class="material-symbols-outlined" style="font-size:18px;">add_circle</span>
+            <span data-i18n="btn_report">Report Issue</span>
+          </a>
+          <a href="#my-complaints" class="btn-secondary" id="hero-track-btn">
+            <span class="material-symbols-outlined" style="font-size:18px;">track_changes</span>
+            <span data-i18n="btn_track">Track Complaint</span>
+          </a>
         </div>
       </div>
-
-      <div class="carousel-slide fade">
-        <img
-          src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-          alt="Village Cleanliness Drive">
-        <div class="carousel-overlay">
-          <h3 class="carousel-caption">Village Cleanliness Drive</h3>
+      <div class="hero-visual">
+        <div class="hero-illustration">
+          <div class="hero-illustration-inner">
+            <span class="material-symbols-outlined">location_city</span>
+            <p>Lonere Grampanchayat</p>
+          </div>
         </div>
-      </div>
-
-      <div class="carousel-slide fade">
-        <img
-          src="https://images.unsplash.com/photo-1582214693156-82ae8c843e93?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-          alt="Drainage Cleaning">
-        <div class="carousel-overlay">
-          <h3 class="carousel-caption">Drainage Cleaning</h3>
-        </div>
-      </div>
-
-      <div class="carousel-slide fade">
-        <img
-          src="https://images.unsplash.com/photo-1595015560128-4ce312b32231?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-          alt="Public Garden Maintenance">
-        <div class="carousel-overlay">
-          <h3 class="carousel-caption">Public Garden Maintenance</h3>
-        </div>
-      </div>
-
-      <!-- Navigation Arrows -->
-      <button class="carousel-btn prev" onclick="changeSlide(-1)">
-        <span class="material-symbols-outlined">chevron_left</span>
-      </button>
-      <button class="carousel-btn next" onclick="changeSlide(1)">
-        <span class="material-symbols-outlined">chevron_right</span>
-      </button>
-
-      <!-- Dots -->
-      <div class="carousel-indicators">
-        <span class="dot active" onclick="currentSlide(1)"></span>
-        <span class="dot" onclick="currentSlide(2)"></span>
-        <span class="dot" onclick="currentSlide(3)"></span>
-        <span class="dot" onclick="currentSlide(4)"></span>
       </div>
     </section>
 
-    <!-- User specific section (hidden when logged out) -->
-    <section id="user-section" style="display: none; margin-top: 40px;">
-      <h3 data-i18n="hello">Hello</h3><span id="user-name"></span>
-      <br><br>
-      <a href="complaint.html" class="btn-primary" style="margin-bottom: 24px;">
-        <span class="material-symbols-outlined">add</span>
-        <span data-i18n="raise_complaint">Raise Complaint</span>
+    <!-- ── QUICK ACTIONS ── -->
+    <div class="section-header" style="margin-top: 8px;">
+      <div class="section-title"><span data-i18n="quick_actions_title">Quick Actions</span> <span data-i18n="quick_actions_sub">What do you want to do?</span></div>
+    </div>
+    <div class="quick-grid">
+      <a href="complaint.html" class="quick-card qc-report">
+        <div class="qc-icon"><span class="material-symbols-outlined">report_problem</span></div>
+        <div class="qc-title" data-i18n="qa_report_title">Report Issue</div>
+        <div class="qc-desc" data-i18n="qa_report_desc">Submit a local civic problem</div>
+      </a>
+      <a href="#my-complaints" class="quick-card qc-track">
+        <div class="qc-icon"><span class="material-symbols-outlined">track_changes</span></div>
+        <div class="qc-title" data-i18n="qa_track_title">Track Complaint</div>
+        <div class="qc-desc" data-i18n="qa_track_desc">Check your complaint status</div>
       </a>
 
-      <h3 data-i18n="my_complaints" style="margin-bottom: 16px;">My Complaints</h3>
-      <div id="my-complaints-list" class="grid-2">
-        <!-- List populated by JS -->
+      <a href="data.html" class="quick-card qc-data">
+        <div class="qc-icon"><span class="material-symbols-outlined">bar_chart</span></div>
+        <div class="qc-title" data-i18n="qa_data_title">Explore Data</div>
+        <div class="qc-desc" data-i18n="qa_data_desc">View issue statistics</div>
+      </a>
+    </div>
+
+
+    <!-- ── USER SECTION ── -->
+    <section id="my-complaints" style="display:none; margin-top: 8px;">
+      <div class="section-header">
+        <div class="section-title"><span data-i18n="my_complaints">My Complaints</span> <span id="user-name-sub"></span></div>
+        <a href="complaint.html" class="btn-primary" style="padding:8px 16px;font-size:.8125rem;">
+          <span class="material-symbols-outlined" style="font-size:16px;">add</span> New
+        </a>
+      </div>
+      <div class="md-card" style="padding: 8px 16px;">
+        <div id="my-complaints-list">
+          <!-- populated by JS -->
+        </div>
       </div>
     </section>
+
   </main>
 
+  <!-- ── BOTTOM NAV ── -->
   <nav class="bottom-nav">
     <a href="index.html" class="nav-item active">
       <div class="icon-container"><span class="material-symbols-outlined">home</span></div>
@@ -125,15 +121,15 @@
     </a>
     <a href="complaint.html" class="nav-item">
       <div class="icon-container"><span class="material-symbols-outlined">report</span></div>
-      <span data-i18n="complaint">Complaint</span>
+      <span data-i18n="complaint_nav">Complaint</span>
     </a>
     <a href="announcements.html" class="nav-item">
-      <div class="icon-container"><span class="material-symbols-outlined">explore</span></div>
-      <span data-i18n="explore">Explore</span>
+      <div class="icon-container"><span class="material-symbols-outlined">campaign</span></div>
+      <span data-i18n="explore_nav">Announcement</span>
     </a>
     <a href="data.html" class="nav-item">
       <div class="icon-container"><span class="material-symbols-outlined">analytics</span></div>
-      <span data-i18n="data">Data</span>
+      <span data-i18n="data_nav">Data</span>
     </a>
   </nav>
 
@@ -145,70 +141,44 @@
       if (user) {
         document.getElementById('login-btn').style.display = 'none';
         document.getElementById('logout-btn').style.display = 'inline-flex';
-        document.getElementById('user-section').style.display = 'block';
-        document.getElementById('user-name').textContent = ', ' + user.name;
+        document.getElementById('my-complaints').style.display = 'block';
+        document.getElementById('user-name-sub').textContent = 'Hello, ' + user.name;
         loadMyComplaints();
       }
-
       document.getElementById('logout-btn').addEventListener('click', () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         window.location.reload();
       });
 
-      // Carousel Initialization
-      initCarousel();
     });
 
-    let slideIndex = 1;
-    let slideTimer;
 
-    function initCarousel() {
-      // Small timeout to ensure elements are rendered
-      setTimeout(() => {
-        showSlides(slideIndex);
-        startAutoSlide();
-      }, 100);
-    }
-
-    function changeSlide(n) {
-      clearInterval(slideTimer);
-      showSlides(slideIndex += n);
-      startAutoSlide();
-    }
-
-    function currentSlide(n) {
-      clearInterval(slideTimer);
-      showSlides(slideIndex = n);
-      startAutoSlide();
-    }
-
-    function showSlides(n) {
-      let i;
-      let slides = document.getElementsByClassName("carousel-slide");
-      let dots = document.getElementsByClassName("dot");
-      if (!slides.length) return;
-
-      if (n > slides.length) { slideIndex = 1 }
-      if (n < 1) { slideIndex = slides.length }
-
-      for (i = 0; i < slides.length; i++) {
-        slides[i].className = slides[i].className.replace(" active", "");
-      }
-      for (i = 0; i < dots.length; i++) {
-        dots[i].className = dots[i].className.replace(" active", "");
-      }
-
-      slides[slideIndex - 1].className += " active";
-      dots[slideIndex - 1].className += " active";
-    }
-
-    function startAutoSlide() {
-      slideTimer = setInterval(function () {
-        showSlides(slideIndex += 1);
-      }, 4000); // Auto slide every 4 seconds
+    /* ── My Complaints ── */
+    async function loadMyComplaints() {
+      try {
+        const res = await fetch('http://localhost:5000/api/complaints/my', {
+          headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+        });
+        const list = await res.json();
+        const container = document.getElementById('my-complaints-list');
+        if (!list.length) {
+          container.innerHTML = `<p style="text-align:center; color:var(--text-3); padding:20px 0;">No complaints yet. <a href="complaint.html" style="color:var(--primary);font-weight:600;">Raise one?</a></p>`;
+          return;
+        }
+        const badgeMap = { 'Pending':'badge-pending','In Progress':'badge-progress','Completed':'badge-done','Rejected':'badge-rejected' };
+        container.innerHTML = list.map(c => `
+          <div class="complaint-item">
+            <div class="complaint-icon"><span class="material-symbols-outlined">report_problem</span></div>
+            <div class="complaint-info">
+              <div class="complaint-title">${c.title}</div>
+              <div class="complaint-meta">${c.category} · ${c.location}</div>
+            </div>
+            <span class="badge ${badgeMap[c.status] || 'badge-pending'}">${c.status}</span>
+          </div>`).join('');
+      } catch(e) { console.error(e); }
     }
   </script>
-</body>
 
+</body>
 </html>

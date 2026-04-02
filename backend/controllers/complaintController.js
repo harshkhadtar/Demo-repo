@@ -71,3 +71,17 @@ exports.updateComplaintStatus = async (req, res) => {
         res.status(500).json({ message: 'Error: ' + error.message });
     }
 };
+
+exports.deleteComplaint = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const result = db.prepare('DELETE FROM complaints WHERE id = ?').run(id);
+        if (result.changes === 0) {
+            return res.status(404).json({ message: 'Complaint not found.' });
+        }
+        res.json({ message: 'Complaint deleted successfully' });
+    } catch (error) {
+        console.error('[deleteComplaint]', error);
+        res.status(500).json({ message: 'Error: ' + error.message });
+    }
+};
