@@ -101,11 +101,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         console.log("API RESPONSE:", data);
 
-        // ✅ HANDLE BOTH CASES (array OR object)
-       const complaints = Array.isArray(data) ? data : data.data || data.complaints || [];
+        // ✅ SAFE EXTRACTION
+        let complaints = [];
 
-        if (!Array.isArray(complaints)) {
-            throw new Error("Complaints is not an array");
+        if (Array.isArray(data)) {
+            complaints = data;
+        } else if (Array.isArray(data.data)) {
+            complaints = data.data;
+        } else if (Array.isArray(data.complaints)) {
+            complaints = data.complaints;
+        } else {
+            console.warn("No complaints array found, using empty array");
+            complaints = []; // fallback
         }
 
         let pending = 0, inprogress = 0, completed = 0, rejected = 0;
@@ -153,7 +160,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Failed to load data', error);
     }
 });
-
     </script>
 </body>
 
