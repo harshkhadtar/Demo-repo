@@ -157,7 +157,7 @@
     /* ── My Complaints ── */
     async function loadMyComplaints() {
       try {
-        const res = await fetch('http://localhost:5000/api/complaints/my', {
+        const res = await fetch('https://demo-repo-9fgn.onrender.com/api/complaints/my', {
           headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
         });
         const list = await res.json();
