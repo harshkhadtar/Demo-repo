@@ -26,14 +26,10 @@ exports.createComplaint = async (req, res) => {
 };
 
 exports.getMyComplaints = async (req, res) => {
+    const userId = req.userId; // ✅ FIX
+
     try {
-        const userId = req.user?.id || req.userId;
-
         console.log("USER ID:", userId);
-
-        if (!userId) {
-            return res.status(401).json({ message: "User not found in token" });
-        }
 
         const complaints = db.prepare(
             'SELECT * FROM complaints WHERE user_id = ? ORDER BY created_at DESC'
@@ -41,12 +37,10 @@ exports.getMyComplaints = async (req, res) => {
 
         console.log("FOUND:", complaints);
 
-        // ✅ FORCE ARRAY RESPONSE
-        return res.json(Array.isArray(complaints) ? complaints : []);
-        
+        res.json(complaints);
     } catch (error) {
         console.error('[getMyComplaints]', error);
-        return res.status(500).json({ message: 'Error: ' + error.message });
+        res.status(500).json({ message: 'Error: ' + error.message });
     }
 };
 
