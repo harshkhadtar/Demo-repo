@@ -88,15 +88,21 @@ exports.login = (req, res) => {
     });
 };
 
-exports.getMe = async (req, res) => {
-    try {
-        const user = db.prepare('SELECT id, name, email, role, created_at FROM users WHERE id = ?').get(req.userId);
-        if (!user) {
-            return res.status(404).json({ message: 'User not found.' });
+exports.getMe = (req, res) => {
+    db.get(
+        'SELECT id, name, email, role, created_at FROM users WHERE id = ?',
+        [req.userId],
+        (err, user) => {
+            if (err) {
+                console.error('[getMe]', err);
+                return res.status(500).json({ message: err.message });
+            }
+
+            if (!user) {
+                return res.status(404).json({ message: 'User not found.' });
+            }
+
+            res.json(user);
         }
-        res.json(user);
-    } catch (error) {
-        console.error('[getMe]', error);
-        res.status(500).json({ message: 'Error: ' + error.message });
-    }
+    );
 };
