@@ -2,7 +2,7 @@ const db = require('../config/db');
 
 exports.createComplaint = async (req, res) => {
     const { title, category, location, description } = req.body;
-    const userId = req.userId;
+    const userId = req.user.id; // ✅ FIXED
     let imageUrl = null;
 
     if (req.file) {
@@ -26,9 +26,17 @@ exports.createComplaint = async (req, res) => {
 };
 
 exports.getMyComplaints = async (req, res) => {
-    const userId = req.userId;
+    const userId = req.user.id; // ✅ FIXED
+
     try {
-        const complaints = db.prepare('SELECT * FROM complaints WHERE user_id = ? ORDER BY created_at DESC').all(userId);
+        console.log("USER ID:", userId); // debug
+
+        const complaints = db.prepare(
+            'SELECT * FROM complaints WHERE user_id = ? ORDER BY created_at DESC'
+        ).all(userId);
+
+        console.log("FOUND:", complaints); // debug
+
         res.json(complaints);
     } catch (error) {
         console.error('[getMyComplaints]', error);
