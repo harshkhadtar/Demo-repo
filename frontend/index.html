@@ -156,28 +156,60 @@
 
     /* ── My Complaints ── */
     async function loadMyComplaints() {
-      try {
-        const res = await fetch('https://demo-repo-9fgn.onrender.com/api/complaints/my', {
-          headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
-        });
-        const list = await res.json();
-        const container = document.getElementById('my-complaints-list');
-        if (!list.length) {
-          container.innerHTML = `<p style="text-align:center; color:var(--text-3); padding:20px 0;">No complaints yet. <a href="complaint.html" style="color:var(--primary);font-weight:600;">Raise one?</a></p>`;
-          return;
-        }
-        const badgeMap = { 'Pending':'badge-pending','In Progress':'badge-progress','Completed':'badge-done','Rejected':'badge-rejected' };
-        container.innerHTML = list.map(c => `
-          <div class="complaint-item">
-            <div class="complaint-icon"><span class="material-symbols-outlined">report_problem</span></div>
-            <div class="complaint-info">
-              <div class="complaint-title">${c.title}</div>
-              <div class="complaint-meta">${c.category} · ${c.location}</div>
-            </div>
-            <span class="badge ${badgeMap[c.status] || 'badge-pending'}">${c.status}</span>
-          </div>`).join('');
-      } catch(e) { console.error(e); }
+  try {
+    const res = await fetch('https://demo-repo-9fgn.onrender.com/api/complaints/my', {
+      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+    });
+
+    const data = await res.json();
+    console.log("MY COMPLAINTS API:", data);
+
+    // ✅ SAFE FIX (same as data.html)
+    let list = [];
+
+    if (Array.isArray(data)) {
+      list = data;
+    } else if (Array.isArray(data.data)) {
+      list = data.data;
+    } else if (Array.isArray(data.complaints)) {
+      list = data.complaints;
+    } else {
+      list = [];
     }
+
+    const container = document.getElementById('my-complaints-list');
+
+    if (!list.length) {
+      container.innerHTML = `<p style="text-align:center; color:var(--text-3); padding:20px 0;">
+        No complaints yet. <a href="complaint.html" style="color:var(--primary);font-weight:600;">Raise one?</a>
+      </p>`;
+      return;
+    }
+
+    const badgeMap = {
+      'Pending':'badge-pending',
+      'In Progress':'badge-progress',
+      'Completed':'badge-done',
+      'Rejected':'badge-rejected'
+    };
+
+    container.innerHTML = list.map(c => `
+      <div class="complaint-item">
+        <div class="complaint-icon">
+          <span class="material-symbols-outlined">report_problem</span>
+        </div>
+        <div class="complaint-info">
+          <div class="complaint-title">${c.title}</div>
+          <div class="complaint-meta">${c.category} · ${c.location}</div>
+        </div>
+        <span class="badge ${badgeMap[c.status] || 'badge-pending'}">${c.status}</span>
+      </div>
+    `).join('');
+
+  } catch(e) {
+    console.error("ERROR LOADING COMPLAINTS:", e);
+  }
+}
   </script>
 
 </body>
