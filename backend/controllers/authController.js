@@ -3,23 +3,43 @@ const jwt = require('jsonwebtoken');
 const db = require('../config/db');
 
 exports.register = async (req, res) => {
-    const { name, email, password } = req.body;
+    let { name, email, password } = req.body;
+
     if (!name || !email || !password) {
         return res.status(400).json({ message: 'All fields are required.' });
     }
 
+    // ✅ FIX 1: Clean email
+    email = email.trim().toLowerCase();
+
     try {
+        console.log("Registering:", email);
+
         const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
+
         if (existing) {
             return res.status(400).json({ message: 'Email already exists.' });
         }
 
         const hashedPassword = bcrypt.hashSync(password, 10);
-        const result = db.prepare('INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)').run(name, email, hashedPassword);
 
-        res.status(201).json({ message: 'User registered successfully!', userId: result.lastInsertRowid });
+        const result = db.prepare(
+            'INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)'
+        ).run(name, email, hashedPassword);
+
+        res.status(201).json({
+            message: 'User registered successfully!',
+            userId: result.lastInsertRowid
+        });
+
     } catch (error) {
         console.error('[register]', error);
+
+        // ✅ FIX 2: Handle UNIQUE constraint error
+        if (error.message.includes('UNIQUE')) {
+            return res.status(400).json({ message: 'Email already exists.' });
+        }
+
         res.status(500).json({ message: 'Error: ' + error.message });
     }
 };
