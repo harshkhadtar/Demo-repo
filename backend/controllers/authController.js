@@ -38,34 +38,54 @@ exports.register = (req, res) => {
         );
     });
 };
-exports.login = async (req, res) => {
-    const { email, password } = req.body;
+exports.login = (req, res) => {
+    let { email, password } = req.body;
+
     if (!email || !password) {
         return res.status(400).json({ message: 'Email and password are required.' });
     }
 
-    try {
-        const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+    email = email.trim().toLowerCase();
+
+    db.get('SELECT * FROM users WHERE email = ?', [email], (err, user) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ message: err.message });
+        }
+
+        console.log("👤 User from DB:", user); // DEBUG
+
         if (!user) {
             return res.status(401).json({ message: 'Invalid credentials.' });
         }
 
+        if (!user.password_hash) {
+            return res.status(500).json({ message: 'Password hash missing in DB' });
+        }
+
         const isMatch = bcrypt.compareSync(password, user.password_hash);
+
         if (!isMatch) {
             return res.status(401).json({ message: 'Invalid credentials.' });
         }
 
-        const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
+        const token = jwt.sign(
+            { id: user.id, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '1d' }
+        );
 
         res.json({
             message: 'Login successful',
             token,
-            user: { id: user.id, name: user.name, email: user.email, role: user.role }
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }
         });
-    } catch (error) {
-        console.error('[login]', error);
-        res.status(500).json({ message: 'Error: ' + error.message });
-    }
+    });
 };
 
 exports.getMe = async (req, res) => {
