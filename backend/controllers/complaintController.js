@@ -28,16 +28,16 @@ exports.createComplaint = async (req, res) => {
 exports.getMyComplaints = async (req, res) => {
     const userId = req.userId;
 
-    console.log("👉 USER ID:", userId);
-
     try {
         const complaints = db.prepare(
             'SELECT * FROM complaints WHERE user_id = ? ORDER BY created_at DESC'
         ).all(userId);
 
-        console.log("👉 DB RESULT:", complaints);
+        console.log("👉 RAW:", complaints);
 
-        res.json(complaints);
+        // ✅ FORCE ARRAY
+        res.json(Array.isArray(complaints) ? complaints : []);
+        
     } catch (error) {
         console.error('[getMyComplaints]', error);
         res.status(500).json({ message: 'Error: ' + error.message });
