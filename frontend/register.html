@@ -114,7 +114,7 @@
           body: JSON.stringify({ name, email, password })
         });
         const data = await response.json();
-        alert('Registration failed: ' + data.message);
+       alert("FULL ERROR: " + JSON.stringify(data));
         if (response.ok) {
           alert('Registration successful! Please login.');
           window.location.href = 'login.html';
