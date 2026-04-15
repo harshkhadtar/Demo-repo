@@ -13,6 +13,8 @@ const db = new sqlite3.Database(DB_PATH, (err) => {
 
 // Create tables
 db.serialize(() => {
+  db.run("DELETE FROM users");
+  console.log("🔥 All users deleted");
   db.run(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
