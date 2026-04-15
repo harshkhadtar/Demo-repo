@@ -157,32 +157,36 @@
     /* ── My Complaints ── */
     async function loadMyComplaints() {
   try {
+    const token = localStorage.getItem('token');
+    console.log("TOKEN:", token); // debug
+
+    if (!token) {
+      console.error("No token found in localStorage");
+      return;
+    }
+
     const res = await fetch('https://demo-repo-9fgn.onrender.com/api/complaints/my', {
-      headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
     });
 
     const data = await res.json();
     console.log("MY COMPLAINTS API:", data);
 
-    // ✅ SAFE FIX (same as data.html)
-    let list = [];
-
-    if (Array.isArray(data)) {
-      list = data;
-    } else if (Array.isArray(data.data)) {
-      list = data.data;
-    } else if (Array.isArray(data.complaints)) {
-      list = data.complaints;
-    } else {
-      list = [];
-    }
-
     const container = document.getElementById('my-complaints-list');
 
-    if (!list.length) {
-      container.innerHTML = `<p style="text-align:center; color:var(--text-3); padding:20px 0;">
-        No complaints yet. <a href="complaint.html" style="color:var(--primary);font-weight:600;">Raise one?</a>
-      </p>`;
+    // ✅ HANDLE OBJECT RESPONSE
+    const list = Array.isArray(data) ? data : data.complaints;
+
+    if (!list || !list.length) {
+      container.innerHTML = `
+        <p style="text-align:center; color:var(--text-3); padding:20px 0;">
+          No complaints yet. 
+          <a href="complaint.html" style="color:var(--primary);font-weight:600;">Raise one?</a>
+        </p>`;
       return;
     }
 
@@ -206,8 +210,8 @@
       </div>
     `).join('');
 
-  } catch(e) {
-    console.error("ERROR LOADING COMPLAINTS:", e);
+  } catch (e) {
+    console.error("LOAD ERROR:", e);
   }
 }
   </script>
