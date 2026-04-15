@@ -26,16 +26,16 @@ exports.createComplaint = async (req, res) => {
 };
 
 exports.getMyComplaints = async (req, res) => {
-    const userId = req.userId; // ✅ FIX
+    const userId = req.userId;
+
+    console.log("👉 USER ID:", userId);
 
     try {
-        console.log("USER ID:", userId);
-
         const complaints = db.prepare(
             'SELECT * FROM complaints WHERE user_id = ? ORDER BY created_at DESC'
         ).all(userId);
 
-        console.log("FOUND:", complaints);
+        console.log("👉 DB RESULT:", complaints);
 
         res.json(complaints);
     } catch (error) {
@@ -43,7 +43,6 @@ exports.getMyComplaints = async (req, res) => {
         res.status(500).json({ message: 'Error: ' + error.message });
     }
 };
-
 exports.getAllComplaints = async (req, res) => {
     try {
         const complaints = db.prepare(`
