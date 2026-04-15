@@ -58,7 +58,7 @@
             if (!confirm('Are you sure you want to delete this announcement?')) return;
             const token = localStorage.getItem('token');
             try {
-                const response = await fetch('http://localhost:5000/api/announcements/' + id, {
+                const response = await fetch('https://demo-repo-9fgn.onrender.com/api/announcements/' + id, {
                     method: 'DELETE',
                     headers: { 'Authorization': 'Bearer ' + token }
                 });
@@ -79,7 +79,7 @@
             const isAdmin = user && user.role === 'admin';
 
             try {
-                const response = await fetch('http://localhost:5000/api/announcements');
+                const response = await fetch('https://demo-repo-9fgn.onrender.com/api/announcements');
                 const announcements = await response.json();
                 const feed = document.getElementById('announcements-feed');
                 feed.innerHTML = '';
@@ -98,7 +98,7 @@
                     
                     feed.innerHTML += `
             <div class="md-card" style="margin-bottom: 24px; position:relative; overflow:hidden;">
-              ${a.media_url ? `<img src="http://localhost:5000${a.media_url}" style="width: 100%; border-radius: 8px; max-height: 400px; object-fit: cover; margin-bottom: 12px;">` : ''}
+              ${a.media_url ? `<img src="https://demo-repo-9fgn.onrender.com${a.media_url}" style="width: 100%; border-radius: 8px; max-height: 400px; object-fit: cover; margin-bottom: 12px;">` : ''}
               ${deleteBtn}
               <h3 style="margin-top:0;">${a.title}</h3>
               <p class="caption">${date}</p>
