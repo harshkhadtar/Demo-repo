@@ -14,111 +14,145 @@
         <div style="display: flex; align-items: center; gap: 12px;">
             <span class="material-symbols-outlined"
                 style="color: var(--md-sys-color-primary); font-size: 32px;">analytics</span>
-            <h1>Data</h1>
+            <h1 data-i18n="data">Data</h1>
+        </div>
+        <div class="app-bar-actions">
+            <select id="language-select">
+                <option value="en">English</option>
+                <option value="mr">मराठी</option>
+            </select>
         </div>
     </header>
 
     <main class="container">
-
         <section style="text-align: center; margin-bottom: 24px;">
-            <h2>Public Issue Analytics</h2>
-            <p>Live overview of all complaints.</p>
+            <h2 style="margin-bottom: 8px;">Public Issue Analytics</h2>
+            <p class="body-large" style="color: var(--md-sys-color-on-surface-variant);">Live overview of all complaints
+                reported in Lonere Grampanchayat.</p>
         </section>
 
-        <!-- Stats -->
-        <section class="grid-2">
-            <div class="md-card" style="text-align:center;">
-                <h3 id="stat-total">0</h3>
-                <p>Total Complaints</p>
+        <!-- Total Complaints Stats -->
+        <section class="grid-2" style="margin-bottom: 24px;">
+            <div class="md-card" style="text-align: center; justify-content: center; padding: 24px;">
+                <h3 style="color: var(--md-sys-color-primary); font-size: 3rem; margin-bottom: 8px;" id="stat-total">0
+                </h3>
+                <p class="body-large" style="font-weight: 500;">Total Complaints Raised</p>
             </div>
-
-            <div class="md-card">
-                <div>Pending: <strong id="stat-pending">0</strong></div>
-                <div>In Progress: <strong id="stat-inprogress">0</strong></div>
-                <div>Completed: <strong id="stat-completed">0</strong></div>
-                <div>Rejected: <strong id="stat-rejected">0</strong></div>
+            <div class="md-card" style="display: flex; flex-direction: column; justify-content: center; gap: 16px;">
+                <div
+                    style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--md-sys-color-outline-variant); color: #E65100;">
+                    <span data-i18n="status_pending">Pending</span> <strong id="stat-pending">0</strong>
+                </div>
+                <div
+                    style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--md-sys-color-outline-variant); color: #1565C0;">
+                    <span data-i18n="status_in_progress">In Progress</span> <strong id="stat-inprogress">0</strong>
+                </div>
+                <div
+                    style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--md-sys-color-outline-variant); color: #2E7D32;">
+                    <span data-i18n="status_completed">Completed</span> <strong id="stat-completed">0</strong>
+                </div>
+                <div
+                    style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--md-sys-color-outline-variant); color: #C62828;">
+                    <span>Rejected</span> <strong id="stat-rejected">0</strong>
+                </div>
             </div>
         </section>
 
         <!-- Charts -->
-        <section class="grid-2">
+        <section class="grid-2" style="margin-bottom: 24px;">
             <div class="md-card">
-                <h3>Status Overview</h3>
+                <h3 style="margin-bottom: 16px; text-align: center;">Status Overview</h3>
                 <canvas id="statusChart"></canvas>
             </div>
-
             <div class="md-card">
-                <h3>Category Overview</h3>
+                <h3 style="margin-bottom: 16px; text-align: center;">Issues by Category</h3>
                 <canvas id="categoryChart"></canvas>
             </div>
         </section>
-
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Mobile Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <div class="icon-container"><span class="material-symbols-outlined">home</span></div>
+            <span data-i18n="home">Home</span>
+        </a>
+        <a href="complaint.html" class="nav-item">
+            <div class="icon-container"><span class="material-symbols-outlined">report</span></div>
+            <span data-i18n="complaint">Complaint</span>
+        </a>
+        <a href="announcements.html" class="nav-item">
+            <div class="icon-container"><span class="material-symbols-outlined">campaign</span></div>
+            <span data-i18n="explore_nav">Announcement</span>
+        </a>
+        <a href="data.html" class="nav-item active">
+            <div class="icon-container"><span class="material-symbols-outlined">analytics</span></div>
+            <span data-i18n="data">Data</span>
+        </a>
+    </nav>
 
+    <script src="js/i18n.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                const response = await fetch('https://demo-repo-9fgn.onrender.com/api/complaints/all');
-                const data = await response.json();
+    try {
+        const response = await fetch('https://demo-repo-9fgn.onrender.com/api/complaints/all');
+        const data = await response.json();
 
-                console.log("API RESPONSE:", data);
+        console.log("API RESPONSE:", data);
 
-                // Handle both formats
-                const complaints = Array.isArray(data) ? data : data.complaints;
+        // ✅ HANDLE BOTH CASES (array OR object)
+        const complaints = Array.isArray(data) ? data : data.complaints;
 
-                if (!Array.isArray(complaints)) {
-                    throw new Error("Complaints is not an array");
-                }
+        if (!Array.isArray(complaints)) {
+            throw new Error("Complaints is not an array");
+        }
 
-                let pending = 0, inprogress = 0, completed = 0, rejected = 0;
-                let categories = {};
+        let pending = 0, inprogress = 0, completed = 0, rejected = 0;
+        let categories = {};
 
-                complaints.forEach(c => {
-                    if (c.status === 'Pending') pending++;
-                    if (c.status === 'In Progress') inprogress++;
-                    if (c.status === 'Completed') completed++;
-                    if (c.status === 'Rejected') rejected++;
+        complaints.forEach(c => {
+            if (c.status === 'Pending') pending++;
+            if (c.status === 'In Progress') inprogress++;
+            if (c.status === 'Completed') completed++;
+            if (c.status === 'Rejected') rejected++;
 
-                    categories[c.category] = (categories[c.category] || 0) + 1;
-                });
+            categories[c.category] = (categories[c.category] || 0) + 1;
+        });
 
-                // Stats
-                document.getElementById('stat-total').textContent = complaints.length;
-                document.getElementById('stat-pending').textContent = pending;
-                document.getElementById('stat-inprogress').textContent = inprogress;
-                document.getElementById('stat-completed').textContent = completed;
-                document.getElementById('stat-rejected').textContent = rejected;
+        document.getElementById('stat-total').textContent = complaints.length;
+        document.getElementById('stat-pending').textContent = pending;
+        document.getElementById('stat-inprogress').textContent = inprogress;
+        document.getElementById('stat-completed').textContent = completed;
+        document.getElementById('stat-rejected').textContent = rejected;
 
-                // ✅ STATUS CHART
-                new Chart(document.getElementById('statusChart'), {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Pending', 'In Progress', 'Completed', 'Rejected'],
-                        datasets: [{
-                            data: [pending, inprogress, completed, rejected]
-                        }]
-                    }
-                });
-
-                // ✅ CATEGORY CHART
-                new Chart(document.getElementById('categoryChart'), {
+    } catch (error) {
+        console.error('Failed to load data', error);
+    }
+});
+                // Category Chart
+                new Chart(document.getElementById('categoryChart').getContext('2d'), {
                     type: 'bar',
                     data: {
                         labels: Object.keys(categories),
                         datasets: [{
                             label: 'Complaints',
-                            data: Object.values(categories)
+                            data: Object.values(categories),
+                            backgroundColor: '#1565C0',
+                            borderRadius: 4
                         }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
                     }
                 });
 
             } catch (error) {
-                console.error('❌ Failed to load data', error);
+                console.error('Failed to load data', error);
             }
         });
     </script>
-
 </body>
+
 </html>
