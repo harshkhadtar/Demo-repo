@@ -102,6 +102,9 @@
                 let pending = 0, inprogress = 0, completed = 0, rejected = 0;
                 let categories = {};
 
+                const complaints = await response.json();
+                console.log("API RESPONSE:", complaints);
+                
                 complaints.forEach(c => {
                     if (c.status === 'Pending') pending++;
                     if (c.status === 'In Progress') inprogress++;
