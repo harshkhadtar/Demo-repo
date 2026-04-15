@@ -26,16 +26,18 @@ exports.createComplaint = async (req, res) => {
 };
 
 exports.getMyComplaints = async (req, res) => {
-    const userId = req.user.id; // ✅ FIXED
+    console.log("HEADERS:", req.headers);
+    console.log("USER:", req.user);
+    console.log("USER ID:", req.user?.id);
 
     try {
-        console.log("USER ID:", userId); // debug
+        const userId = req.user?.id;
 
         const complaints = db.prepare(
             'SELECT * FROM complaints WHERE user_id = ? ORDER BY created_at DESC'
         ).all(userId);
 
-        console.log("FOUND:", complaints); // debug
+        console.log("FOUND:", complaints);
 
         res.json(complaints);
     } catch (error) {
