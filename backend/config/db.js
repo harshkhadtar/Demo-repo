@@ -13,8 +13,8 @@ const db = new sqlite3.Database(DB_PATH, (err) => {
 
 // Create tables
 db.serialize(() => {
-  db.run("DELETE FROM users");
-  console.log("🔥 All users deleted");
+
+  // ✅ FIRST create tables
   db.run(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -52,6 +52,10 @@ db.serialize(() => {
     )
   `);
 
+  // 🔥 THEN delete users (AFTER table exists)
+  db.run("DELETE FROM users");
+  console.log("🔥 All users deleted");
+
   // Check admin exists
   db.get(
     'SELECT id FROM users WHERE email = ?',
@@ -70,5 +74,4 @@ db.serialize(() => {
     }
   );
 });
-
 module.exports = db;
