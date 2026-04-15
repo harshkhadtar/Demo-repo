@@ -26,22 +26,12 @@ exports.createComplaint = async (req, res) => {
 };
 
 exports.getMyComplaints = async (req, res) => {
-    const userId = req.userId;
+    console.log("🔥 NEW API HIT");
 
-    try {
-        const complaints = db.prepare(
-            'SELECT * FROM complaints WHERE user_id = ? ORDER BY created_at DESC'
-        ).all(userId);
-
-        console.log("👉 RAW:", complaints);
-
-        // ✅ FORCE ARRAY
-        res.json(Array.isArray(complaints) ? complaints : []);
-        
-    } catch (error) {
-        console.error('[getMyComplaints]', error);
-        res.status(500).json({ message: 'Error: ' + error.message });
-    }
+    res.json({
+        working: true,
+        userId: req.userId
+    });
 };
 exports.getAllComplaints = async (req, res) => {
     try {
