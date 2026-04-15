@@ -1,20 +1,5 @@
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
-const bcrypt = require('bcryptjs');
-
-const DB_PATH = path.join(__dirname, '../../database/app.db');
-
-const db = new sqlite3.Database(DB_PATH, (err) => {
-  if (err) {
-    console.error(err.message);
-  }
-  console.log('Connected to SQLite database.');
-});
-
-// Create tables
 db.serialize(() => {
 
-  // ✅ FIRST create tables
   db.run(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -52,11 +37,7 @@ db.serialize(() => {
     )
   `);
 
-  // 🔥 THEN delete users (AFTER table exists)
-  db.run("DELETE FROM users");
-  console.log("🔥 All users deleted");
-
-  // Check admin exists
+  // ✅ Only create admin if not exists
   db.get(
     'SELECT id FROM users WHERE email = ?',
     ['admin@lonere.gov'],
@@ -74,4 +55,3 @@ db.serialize(() => {
     }
   );
 });
-module.exports = db;
