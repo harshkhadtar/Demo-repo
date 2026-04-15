@@ -96,7 +96,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/complaints/all');
+                const response = await fetch('https://demo-repo-9fgn.onrender.com/api/complaints/all');
                 const complaints = await response.json();
 
                 let pending = 0, inprogress = 0, completed = 0, rejected = 0;
