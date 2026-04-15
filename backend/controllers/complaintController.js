@@ -2,7 +2,7 @@ const db = require('../config/db');
 
 exports.createComplaint = async (req, res) => {
     const { title, category, location, description } = req.body;
-    const userId = req.user.id; // ✅ FIXED
+    const userId = req.userId; // ✅ NOT req.user.id// ✅ FIXED
     let imageUrl = null;
 
     if (req.file) {
