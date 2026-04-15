@@ -114,7 +114,7 @@
         });
         const data = await response.json();
         console.log("PASSWORD:", password);
-        console.log("HASH:", user.password_hash);
+        console.log("Response:", data);
         if (response.ok) {
           localStorage.setItem('token', data.token);
           localStorage.setItem('user', JSON.stringify(data.user));
