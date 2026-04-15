@@ -2,46 +2,41 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const db = require('../config/db');
 
-exports.register = async (req, res) => {
+exports.register = (req, res) => {
     let { name, email, password } = req.body;
 
-    console.log("📥 Incoming data:", req.body);
-
     if (!name || !email || !password) {
-        console.log("❌ Missing fields");
         return res.status(400).json({ message: 'All fields are required.' });
     }
 
     email = email.trim().toLowerCase();
 
-    try {
-        console.log("🔍 Checking email:", email);
+    db.get('SELECT id FROM users WHERE email = ?', [email], (err, row) => {
+        if (err) {
+            return res.status(500).json({ message: err.message });
+        }
 
-        const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
-
-        console.log("🔎 Existing result:", existing);
-
-        if (existing) {
+        if (row) {
             return res.status(400).json({ message: 'Email already exists.' });
         }
 
         const hashedPassword = bcrypt.hashSync(password, 10);
 
-        const result = db.prepare(
-            'INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)'
-        ).run(name, email, hashedPassword);
+        db.run(
+            'INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)',
+            [name, email, hashedPassword],
+            function (err) {
+                if (err) {
+                    return res.status(500).json({ message: err.message });
+                }
 
-        console.log("✅ User inserted:", result);
-
-        res.status(201).json({
-            message: 'User registered successfully!',
-            userId: result.lastInsertRowid
-        });
-
-    } catch (error) {
-        console.error('[register error]', error);
-        res.status(500).json({ message: 'Error: ' + error.message });
-    }
+                res.status(201).json({
+                    message: 'User registered successfully!',
+                    userId: this.lastID
+                });
+            }
+        );
+    });
 };
 exports.login = async (req, res) => {
     const { email, password } = req.body;
