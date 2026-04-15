@@ -5,17 +5,21 @@ const db = require('../config/db');
 exports.register = async (req, res) => {
     let { name, email, password } = req.body;
 
+    console.log("📥 Incoming data:", req.body);
+
     if (!name || !email || !password) {
+        console.log("❌ Missing fields");
         return res.status(400).json({ message: 'All fields are required.' });
     }
 
-    // ✅ FIX 1: Clean email
     email = email.trim().toLowerCase();
 
     try {
-        console.log("Registering:", email);
+        console.log("🔍 Checking email:", email);
 
         const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
+
+        console.log("🔎 Existing result:", existing);
 
         if (existing) {
             return res.status(400).json({ message: 'Email already exists.' });
@@ -27,23 +31,18 @@ exports.register = async (req, res) => {
             'INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)'
         ).run(name, email, hashedPassword);
 
+        console.log("✅ User inserted:", result);
+
         res.status(201).json({
             message: 'User registered successfully!',
             userId: result.lastInsertRowid
         });
 
     } catch (error) {
-        console.error('[register]', error);
-
-        // ✅ FIX 2: Handle UNIQUE constraint error
-        if (error.message.includes('UNIQUE')) {
-            return res.status(400).json({ message: 'Email already exists.' });
-        }
-
+        console.error('[register error]', error);
         res.status(500).json({ message: 'Error: ' + error.message });
     }
 };
-
 exports.login = async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
