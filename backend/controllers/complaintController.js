@@ -58,14 +58,20 @@ exports.getMyComplaints = (req, res) => {
 // ✅ GET ALL
 exports.getAllComplaints = (req, res) => {
     db.all(
-  `SELECT c.*, u.name as user_name, u.email as user_email
-   FROM complaints c
-   JOIN users u ON c.user_id = u.id`,
-  [],
-  (err, rows) => { ... }
-);
-};
+        `SELECT c.*, u.name as user_name, u.email as user_email
+         FROM complaints c
+         JOIN users u ON c.user_id = u.id`,
+        [],
+        (err, rows) => {
+            if (err) {
+                console.error("❌ ERROR:", err.message);
+                return res.status(500).json({ message: err.message });
+            }
 
+            res.json(rows);
+        }
+    );
+};
 // ✅ UPDATE
 exports.updateComplaintStatus = (req, res) => {
     const { id } = req.params;
