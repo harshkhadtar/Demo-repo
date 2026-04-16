@@ -25,20 +25,19 @@ db.serialize(() => {
   `);
 
   // COMPLAINTS
-  db.run(
-  'INSERT INTO complaints (user_id, title, category, location, description, image_url) VALUES (?, ?, ?, ?, ?, ?)',
-  [userId, title, category, location, description, imageUrl],
-  function (err) {
-    if (err) {
-      return res.status(500).json({ message: err.message });
-    }
-
-    res.status(201).json({
-      message: 'Complaint created',
-      complaintId: this.lastID
-    });
-  }
-);
+  db.run(`
+  CREATE TABLE IF NOT EXISTS complaints (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    category TEXT NOT NULL,
+    location TEXT NOT NULL,
+    description TEXT NOT NULL,
+    image_url TEXT,
+    status TEXT DEFAULT 'Pending',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )
+`);
 
   // ANNOUNCEMENTS
   db.run(`
