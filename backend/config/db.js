@@ -40,7 +40,7 @@ db.serialize(() => {
   `);
 
   // ANNOUNCEMENTS
- db.run(`
+db.run(`
   CREATE TABLE IF NOT EXISTS announcements (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     admin_id INTEGER,
