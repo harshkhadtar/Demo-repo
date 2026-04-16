@@ -91,7 +91,7 @@ exports.login = (req, res) => {
 exports.getMe = (req, res) => {
     db.get(
         'SELECT id, name, email, role, created_at FROM users WHERE id = ?',
-        [req.userId],
+        [req.user.id],
         (err, user) => {
             if (err) {
                 console.error('[getMe]', err);
