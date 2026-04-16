@@ -25,19 +25,19 @@ db.serialize(() => {
   `);
 
   // COMPLAINTS
-  db.run(`
-  CREATE TABLE IF NOT EXISTS complaints (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
-    title TEXT NOT NULL,
-    category TEXT NOT NULL,
-    location TEXT NOT NULL,
-    description TEXT NOT NULL,
-    image_url TEXT,
-    status TEXT DEFAULT 'Pending',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  )
-`);
+ db.run(`
+    CREATE TABLE IF NOT EXISTS complaints (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER,
+      title TEXT,
+      category TEXT,
+      location TEXT,
+      description TEXT,
+      image_url TEXT,
+      status TEXT DEFAULT 'Pending',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
 
   // ANNOUNCEMENTS
   db.run(`
