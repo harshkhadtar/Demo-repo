@@ -20,7 +20,7 @@ const verifyToken = (req, res, next) => {
 
         console.log("DECODED:", decoded); // 🔥 DEBUG
 
-        req.user = decoded;   // ✅ IMPORTANT FIX
+       req.userId = decoded.id;   // ✅ IMPORTANT FIX
         next();
     });
 };
