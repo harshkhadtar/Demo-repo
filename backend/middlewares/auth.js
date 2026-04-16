@@ -9,26 +9,21 @@ const verifyToken = (req, res, next) => {
 
     const token = authHeader.split(' ')[1];
 
-    if (!token) {
-        return res.status(403).json({ message: 'Invalid token format' });
-    }
-
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
         if (err) {
             return res.status(401).json({ message: 'Unauthorized' });
         }
 
-        console.log("✅ DECODED:", decoded);
-
-        // ✅ STORE FULL USER
-        req.user = decoded;
+        // ✅ FIX: store both
+        req.userId = decoded.id;
+        req.role = decoded.role;
 
         next();
     });
 };
 
 const isAdmin = (req, res, next) => {
-    if (!req.user || req.user.role !== 'admin') {
+    if (req.role !== 'admin') {
         return res.status(403).json({ message: 'Require Admin Role' });
     }
     next();
