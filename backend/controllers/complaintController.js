@@ -26,12 +26,21 @@ exports.createComplaint = async (req, res) => {
 };
 
 exports.getMyComplaints = async (req, res) => {
-    console.log("🔥 NEW API HIT");
+    try {
+        const userId = req.userId;
 
-    res.json({
-        working: true,
-        userId: req.userId
-    });
+        const complaints = db.prepare(`
+            SELECT * FROM complaints 
+            WHERE user_id = ?
+            ORDER BY created_at DESC
+        `).all(userId);
+
+        res.json(complaints);
+
+    } catch (error) {
+        console.error('[getMyComplaints]', error);
+        res.status(500).json({ message: 'Error: ' + error.message });
+    }
 };
 exports.getAllComplaints = async (req, res) => {
     try {
