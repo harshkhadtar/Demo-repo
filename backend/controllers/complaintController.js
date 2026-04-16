@@ -38,6 +38,8 @@ exports.getMyComplaints = (req, res) => {
         'SELECT * FROM complaints WHERE user_id = ? ORDER BY created_at DESC',
         [userId],
         (err, rows) => {
+            console.log("🔥 DB RESULT:", rows); // 👈 ADD THIS
+
             if (err) {
                 return res.status(500).json({ message: err.message });
             }
