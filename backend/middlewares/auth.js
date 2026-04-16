@@ -20,15 +20,15 @@ const verifyToken = (req, res, next) => {
 
         console.log("✅ DECODED:", decoded);
 
-        req.userId = decoded.id;
-        req.role = decoded.role;   // ✅ ADD THIS
+        // ✅ STORE FULL USER
+        req.user = decoded;
 
         next();
     });
 };
 
 const isAdmin = (req, res, next) => {
-    if (req.role !== 'admin') {   // ✅ FIX HERE
+    if (!req.user || req.user.role !== 'admin') {
         return res.status(403).json({ message: 'Require Admin Role' });
     }
     next();
