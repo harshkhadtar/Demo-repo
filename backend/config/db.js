@@ -2,7 +2,7 @@ const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcryptjs');
 
 // ✅ Create DB
-const db = new sqlite3.Database('./database_new.sqlite, (err) => {
+const db = new sqlite3.Database('./database_v2.sqlite', (err) => {
   if (err) {
     console.error('❌ DB Error:', err.message);
   } else {
