@@ -40,17 +40,17 @@ db.serialize(() => {
   `);
 
   // ANNOUNCEMENTS
-  db.run(`
-    CREATE TABLE IF NOT EXISTS announcements (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      admin_id INTEGER NOT NULL,
-      type TEXT DEFAULT 'text',
-      title TEXT NOT NULL,
-      body TEXT NOT NULL,
-      media_url TEXT,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
+ db.run(`
+  CREATE TABLE IF NOT EXISTS announcements (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    admin_id INTEGER,
+    type TEXT,
+    title TEXT,
+    body TEXT,
+    media_url TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )
+`);
 
   // ✅ Default Admin
   db.get(
