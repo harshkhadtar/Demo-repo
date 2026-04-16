@@ -1,18 +1,18 @@
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcryptjs');
 
-// ✅ Create DB connection
+// ✅ Create DB
 const db = new sqlite3.Database('./database.sqlite', (err) => {
   if (err) {
-    console.error('❌ DB connection error:', err.message);
+    console.error('❌ DB Error:', err.message);
   } else {
-    console.log('✅ Connected to SQLite database');
+    console.log('✅ Connected to SQLite');
   }
 });
 
-// ✅ Create tables
 db.serialize(() => {
 
+  // USERS
   db.run(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -24,6 +24,7 @@ db.serialize(() => {
     )
   `);
 
+  // COMPLAINTS
   db.run(`
     CREATE TABLE IF NOT EXISTS complaints (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -38,6 +39,7 @@ db.serialize(() => {
     )
   `);
 
+  // ANNOUNCEMENTS
   db.run(`
     CREATE TABLE IF NOT EXISTS announcements (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -50,24 +52,23 @@ db.serialize(() => {
     )
   `);
 
-  // ✅ Create default admin if not exists
+  // ✅ Default Admin
   db.get(
     'SELECT id FROM users WHERE email = ?',
     ['admin@lonere.gov'],
     (err, row) => {
       if (!row) {
         const hash = bcrypt.hashSync('admin123', 10);
+
         db.run(
           "INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, 'admin')",
           ['Admin', 'admin@lonere.gov', hash],
-          () => {
-            console.log('✅ Default admin created');
-          }
+          () => console.log('✅ Admin created')
         );
       }
     }
   );
+
 });
 
-// ✅ Export DB
 module.exports = db;
