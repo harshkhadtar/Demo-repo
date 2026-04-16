@@ -22,6 +22,10 @@ exports.createAnnouncement = (req, res) => {
         return res.status(400).json({ message: 'Title and body required' });
     }
 
+
+    console.log("👉 ANNOUNCEMENT HIT");
+console.log("BODY:", req.body);
+console.log("FILE:", req.file);
     db.run(
         'INSERT INTO announcements (admin_id, type, title, body, media_url) VALUES (?, ?, ?, ?, ?)',
         [adminId, type || 'text', title, body, mediaUrl],
@@ -41,6 +45,10 @@ exports.createAnnouncement = (req, res) => {
 
 // GET ALL
 exports.getAllAnnouncements = (req, res) => {
+
+    console.log("👉 ANNOUNCEMENT HIT");
+console.log("BODY:", req.body);
+console.log("FILE:", req.file);
     db.all(
         'SELECT * FROM announcements ORDER BY created_at DESC',
         [],
@@ -57,6 +65,10 @@ exports.getAllAnnouncements = (req, res) => {
 
 // DELETE
 exports.deleteAnnouncement = (req, res) => {
+    console.log("👉 ANNOUNCEMENT HIT");
+console.log("BODY:", req.body);
+console.log("FILE:", req.file);
+    
     const { id } = req.params;
 
     db.run(
