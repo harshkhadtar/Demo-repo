@@ -33,17 +33,13 @@ exports.createAnnouncement = (req, res) => {
 // GET
 exports.getAllAnnouncements = (req, res) => {
     db.all(
-        'SELECT * FROM announcements ORDER BY created_at DESC',
-        [],
-        (err, rows) => {
-            if (err) {
-                console.error(err);
-                return res.status(500).json({ message: err.message });
-            }
-
-            res.json(rows);
-        }
-    );
+  'SELECT * FROM announcements ORDER BY created_at DESC',
+  [],
+  (err, rows) => {
+    if (err) return res.status(500).json({ message: err.message });
+    res.json(rows);
+  }
+);
 };
 
 // DELETE
