@@ -1,3 +1,16 @@
+const sqlite3 = require('sqlite3').verbose();
+const bcrypt = require('bcrypt');
+
+// ✅ Create DB connection
+const db = new sqlite3.Database('./database.sqlite', (err) => {
+  if (err) {
+    console.error('❌ DB connection error:', err.message);
+  } else {
+    console.log('✅ Connected to SQLite database');
+  }
+});
+
+// ✅ Create tables
 db.serialize(() => {
 
   db.run(`
@@ -37,7 +50,7 @@ db.serialize(() => {
     )
   `);
 
-  // ✅ Only create admin if not exists
+  // ✅ Create default admin if not exists
   db.get(
     'SELECT id FROM users WHERE email = ?',
     ['admin@lonere.gov'],
@@ -55,3 +68,6 @@ db.serialize(() => {
     }
   );
 });
+
+// ✅ Export DB
+module.exports = db;
