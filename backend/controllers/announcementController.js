@@ -2,15 +2,17 @@ const db = require('../config/db');
 
 exports.createAnnouncement = (req, res) => {
     const { title, body, type } = req.body;
-    const adminId = req.user.id ;
+    const adminId = req.userId;
+
+    console.log("👉 ANNOUNCEMENT:", { title, body, adminId });
+
+    if (!title || !body) {
+        return res.status(400).json({ message: 'Title and body required' });
+    }
 
     let mediaUrl = null;
     if (req.file) {
         mediaUrl = `/uploads/${req.file.filename}`;
-    }
-
-    if (!title || !body) {
-        return res.status(400).json({ message: 'Title and body required' });
     }
 
     db.run(
@@ -18,14 +20,11 @@ exports.createAnnouncement = (req, res) => {
         [adminId, type || 'text', title, body, mediaUrl],
         function (err) {
             if (err) {
-                console.error("❌ ANN ERROR:", err);
+                console.error("❌ ANN DB ERROR:", err.message);
                 return res.status(500).json({ message: err.message });
             }
 
-            res.json({
-                message: 'Announcement created',
-                id: this.lastID
-            });
+            res.json({ message: 'Created', id: this.lastID });
         }
     );
 };
