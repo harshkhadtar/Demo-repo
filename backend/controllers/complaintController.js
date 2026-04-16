@@ -66,19 +66,30 @@ exports.updateComplaintStatus = (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
-    console.log("UPDATE:", id, status); // ✅ DEBUG
+    console.log("🔥 UPDATE STATUS:", id, status);
+
+    const allowedStatuses = ['Pending', 'Rejected', 'In Progress', 'Completed'];
+
+    if (!allowedStatuses.includes(status)) {
+        return res.status(400).json({ message: 'Invalid status' });
+    }
 
     db.run(
-  'UPDATE complaints SET status = ? WHERE id = ?',
-  [status, id],
-  function (err) {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ message: err.message });
-    }
-    res.json({ message: 'Updated' });
-  }
-);
+        'UPDATE complaints SET status = ? WHERE id = ?',
+        [status, id],
+        function (err) {
+            if (err) {
+                console.error("❌ UPDATE ERROR:", err); // 👈 IMPORTANT
+                return res.status(500).json({ message: err.message });
+            }
+
+            if (this.changes === 0) {
+                return res.status(404).json({ message: 'Complaint not found' });
+            }
+
+            res.json({ message: 'Status updated successfully' });
+        }
+    );
 };
 
 // ✅ DELETE
