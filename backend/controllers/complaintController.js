@@ -54,10 +54,7 @@ exports.getAllComplaints = (req, res) => {
    FROM complaints c
    JOIN users u ON c.user_id = u.id`,
   [],
-  (err, rows) => {
-    if (err) return res.status(500).json({ message: err.message });
-    res.json(rows);
-  }
+  (err, rows) => { ... }
 );
 };
 
