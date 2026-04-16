@@ -1,14 +1,6 @@
-process.on('uncaughtException', err => {
-    console.error('💥 UNCAUGHT EXCEPTION:', err);
-});
-
-process.on('unhandledRejection', err => {
-    console.error('💥 UNHANDLED REJECTION:', err);
-});
-
 const db = require('../config/db');
 
-// ✅ CREATE
+// CREATE
 exports.createComplaint = (req, res) => {
     const { title, category, location, description } = req.body;
     const userId = req.userId;
@@ -27,35 +19,16 @@ exports.createComplaint = (req, res) => {
         [userId, title, category, location, description, imageUrl],
         function (err) {
             if (err) {
+                console.error("❌ CREATE ERROR:", err);
                 return res.status(500).json({ message: err.message });
             }
 
-            res.json({
-                message: 'Complaint created',
-                complaintId: this.lastID
-            });
+            res.json({ message: 'Created', id: this.lastID });
         }
     );
 };
 
-// ✅ GET MY COMPLAINTS (FIXED)
-exports.getMyComplaints = (req, res) => {
-    const userId = req.userId;
-
-    db.all(
-        'SELECT * FROM complaints WHERE user_id = ?',
-        [userId],
-        (err, rows) => {
-            console.log("DB DATA:", rows); // 🔥 DEBUG
-
-            if (err) return res.status(500).json({ message: err.message });
-
-            res.json(rows);
-        }
-    );
-};
-
-// ✅ GET ALL
+// GET ALL
 exports.getAllComplaints = (req, res) => {
     db.all(
         `SELECT c.*, u.name as user_name, u.email as user_email
@@ -64,7 +37,7 @@ exports.getAllComplaints = (req, res) => {
         [],
         (err, rows) => {
             if (err) {
-                console.error("❌ ERROR:", err.message);
+                console.error("❌ FETCH ERROR:", err);
                 return res.status(500).json({ message: err.message });
             }
 
@@ -72,35 +45,33 @@ exports.getAllComplaints = (req, res) => {
         }
     );
 };
-// ✅ UPDATE
+
+// UPDATE STATUS
 exports.updateComplaintStatus = (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
-    console.log("👉 HIT UPDATE", id, status);
+    console.log("👉 UPDATE:", id, status);
 
     if (!status) {
         return res.status(400).json({ message: 'Status required' });
     }
-    console.log("BODY:", req.body);
+
     db.run(
         'UPDATE complaints SET status = ? WHERE id = ?',
         [status, id],
         function (err) {
             if (err) {
-                console.error("❌ ERROR:", err.message);
+                console.error("❌ UPDATE ERROR:", err);
                 return res.status(500).json({ message: err.message });
             }
 
-            if (this.changes === 0) {
-                return res.status(404).json({ message: 'Not found' });
-            }
-
-            res.json({ message: 'Updated successfully' });
+            res.json({ message: 'Updated' });
         }
     );
 };
-// ✅ DELETE
+
+// DELETE
 exports.deleteComplaint = (req, res) => {
     const { id } = req.params;
 
@@ -108,10 +79,9 @@ exports.deleteComplaint = (req, res) => {
         'DELETE FROM complaints WHERE id = ?',
         [id],
         function (err) {
-            if (err) return res.status(500).json({ message: err.message });
-
-            if (this.changes === 0) {
-                return res.status(404).json({ message: 'Not found' });
+            if (err) {
+                console.error("❌ DELETE ERROR:", err);
+                return res.status(500).json({ message: err.message });
             }
 
             res.json({ message: 'Deleted' });
