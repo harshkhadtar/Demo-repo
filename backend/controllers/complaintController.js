@@ -82,7 +82,7 @@ exports.updateComplaintStatus = (req, res) => {
     if (!status) {
         return res.status(400).json({ message: 'Status required' });
     }
-
+    console.log("BODY:", req.body);
     db.run(
         'UPDATE complaints SET status = ? WHERE id = ?',
         [status, id],
