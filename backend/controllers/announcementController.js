@@ -1,11 +1,3 @@
-process.on('uncaughtException', err => {
-    console.error('💥 UNCAUGHT EXCEPTION:', err);
-});
-
-process.on('unhandledRejection', err => {
-    console.error('💥 UNHANDLED REJECTION:', err);
-});
-
 const db = require('../config/db');
 
 // CREATE
@@ -18,43 +10,34 @@ exports.createAnnouncement = (req, res) => {
         mediaUrl = `/uploads/${req.file.filename}`;
     }
 
+    console.log("👉 ANN:", req.body);
+
     if (!title || !body) {
         return res.status(400).json({ message: 'Title and body required' });
     }
 
-
-    console.log("👉 ANNOUNCEMENT HIT");
-console.log("BODY:", req.body);
-console.log("FILE:", req.file);
     db.run(
         'INSERT INTO announcements (admin_id, type, title, body, media_url) VALUES (?, ?, ?, ?, ?)',
         [adminId, type || 'text', title, body, mediaUrl],
         function (err) {
             if (err) {
-                console.error("❌ ANNOUNCEMENT ERROR:", err);
+                console.error("❌ ANN ERROR:", err);
                 return res.status(500).json({ message: err.message });
             }
 
-            res.json({
-                message: 'Announcement created',
-                id: this.lastID
-            });
+            res.json({ message: 'Created', id: this.lastID });
         }
     );
 };
 
-// GET ALL
+// GET
 exports.getAllAnnouncements = (req, res) => {
-
-    console.log("👉 ANNOUNCEMENT HIT");
-console.log("BODY:", req.body);
-console.log("FILE:", req.file);
     db.all(
         'SELECT * FROM announcements ORDER BY created_at DESC',
         [],
         (err, rows) => {
             if (err) {
-                console.error("❌ FETCH ANNOUNCEMENTS ERROR:", err);
+                console.error("❌ FETCH ANN ERROR:", err);
                 return res.status(500).json({ message: err.message });
             }
 
@@ -65,10 +48,6 @@ console.log("FILE:", req.file);
 
 // DELETE
 exports.deleteAnnouncement = (req, res) => {
-    console.log("👉 ANNOUNCEMENT HIT");
-console.log("BODY:", req.body);
-console.log("FILE:", req.file);
-    
     const { id } = req.params;
 
     db.run(
@@ -76,7 +55,7 @@ console.log("FILE:", req.file);
         [id],
         function (err) {
             if (err) {
-                console.error("❌ DELETE ANNOUNCEMENT ERROR:", err);
+                console.error("❌ DELETE ANN ERROR:", err);
                 return res.status(500).json({ message: err.message });
             }
 
