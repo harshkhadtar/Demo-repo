@@ -5,8 +5,6 @@ exports.createAnnouncement = (req, res) => {
     const { title, body, type } = req.body;
     const adminId = req.userId;
 
-    console.log("ADMIN ID:", adminId); // 🔥 DEBUG
-
     let mediaUrl = null;
     if (req.file) {
         mediaUrl = `/uploads/${req.file.filename}`;
@@ -21,29 +19,29 @@ exports.createAnnouncement = (req, res) => {
         [adminId, type || 'text', title, body, mediaUrl],
         function (err) {
             if (err) {
-                console.error("❌ DB ERROR:", err);
+                console.error("❌ ANNOUNCEMENT ERROR:", err);
                 return res.status(500).json({ message: err.message });
             }
 
-            res.json({ message: 'Created', id: this.lastID });
+            res.json({
+                message: 'Announcement created',
+                id: this.lastID
+            });
         }
     );
 };
 
-// GET
+// GET ALL
 exports.getAllAnnouncements = (req, res) => {
-    console.log("🔥 GET ANNOUNCEMENTS HIT");
-
     db.all(
         'SELECT * FROM announcements ORDER BY created_at DESC',
         [],
         (err, rows) => {
             if (err) {
-                console.error("❌ ANN FETCH ERROR:", err); // 👈 THIS IS KEY
-                return res.status(500).json({ error: err.message });
+                console.error("❌ FETCH ANNOUNCEMENTS ERROR:", err);
+                return res.status(500).json({ message: err.message });
             }
 
-            console.log("✅ DATA:", rows);
             res.json(rows);
         }
     );
@@ -58,7 +56,7 @@ exports.deleteAnnouncement = (req, res) => {
         [id],
         function (err) {
             if (err) {
-                console.error(err);
+                console.error("❌ DELETE ANNOUNCEMENT ERROR:", err);
                 return res.status(500).json({ message: err.message });
             }
 
