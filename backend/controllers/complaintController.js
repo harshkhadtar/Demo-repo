@@ -3,7 +3,7 @@ const db = require('../config/db');
 // CREATE
 exports.createComplaint = (req, res) => {
     const { title, category, location, description } = req.body;
-    const userId = req.user.id;
+    const userId = req.userId;
 
     let imageUrl = null;
     if (req.file) {
