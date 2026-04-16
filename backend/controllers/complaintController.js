@@ -51,6 +51,10 @@ exports.updateComplaintStatus = (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
+    if (!id || !status) {
+        return res.status(400).json({ message: 'Missing data' });
+    }
+
     db.run(
         'UPDATE complaints SET status = ? WHERE id = ?',
         [status, id],
