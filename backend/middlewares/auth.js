@@ -15,18 +15,20 @@ const verifyToken = (req, res, next) => {
 
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
         if (err) {
-            return res.status(401).json({ message: 'Unauthorized: Invalid token' });
+            return res.status(401).json({ message: 'Unauthorized' });
         }
 
-        console.log("DECODED:", decoded); // 🔥 DEBUG
+        console.log("✅ DECODED:", decoded);
 
-       req.userId = decoded.id;   // ✅ IMPORTANT FIX
+        req.userId = decoded.id;
+        req.role = decoded.role;   // ✅ ADD THIS
+
         next();
     });
 };
 
 const isAdmin = (req, res, next) => {
-    if (req.user.role !== 'admin') {
+    if (req.role !== 'admin') {   // ✅ FIX HERE
         return res.status(403).json({ message: 'Require Admin Role' });
     }
     next();
