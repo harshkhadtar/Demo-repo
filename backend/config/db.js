@@ -39,6 +39,15 @@ db.run(`
   )
 `);
 
+  // 🔥 FORCE ADD COLUMN (VERY IMPORTANT)
+db.run(`ALTER TABLE complaints ADD COLUMN status TEXT DEFAULT 'Pending'`, (err) => {
+  if (err) {
+    console.log("ℹ️ status column may already exist");
+  } else {
+    console.log("✅ status column added");
+  }
+});
+
   // ANNOUNCEMENTS
 db.run(`
   CREATE TABLE IF NOT EXISTS announcements (
