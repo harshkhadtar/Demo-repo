@@ -51,12 +51,6 @@ exports.updateComplaintStatus = (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
-    console.log("👉 UPDATE:", id, status);
-
-    if (!status) {
-        return res.status(400).json({ message: 'Status required' });
-    }
-
     db.run(
         'UPDATE complaints SET status = ? WHERE id = ?',
         [status, id],
@@ -66,7 +60,7 @@ exports.updateComplaintStatus = (req, res) => {
                 return res.status(500).json({ message: err.message });
             }
 
-            res.json({ message: 'Updated' });
+            res.json({ message: 'Updated successfully' });
         }
     );
 };
