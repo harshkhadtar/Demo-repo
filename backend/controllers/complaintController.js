@@ -71,25 +71,26 @@ exports.updateComplaintStatus = (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
-    console.log("👉 ID:", id);
-    console.log("👉 STATUS:", status);
+    console.log("👉 HIT UPDATE", id, status);
 
-    console.log("👉 PATCH HIT");
-console.log("BODY:", req.body);
-console.log("PARAM:", req.params);
-    
+    if (!status) {
+        return res.status(400).json({ message: 'Status required' });
+    }
+
     db.run(
         'UPDATE complaints SET status = ? WHERE id = ?',
         [status, id],
         function (err) {
             if (err) {
-                console.error("❌ DB ERROR:", err); // 👈 THIS IS KEY
+                console.error("❌ ERROR:", err.message);
                 return res.status(500).json({ message: err.message });
             }
 
-            console.log("✅ CHANGES:", this.changes);
+            if (this.changes === 0) {
+                return res.status(404).json({ message: 'Not found' });
+            }
 
-            res.json({ message: "Updated" });
+            res.json({ message: 'Updated successfully' });
         }
     );
 };
