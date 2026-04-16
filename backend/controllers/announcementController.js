@@ -1,13 +1,19 @@
 const db = require('../config/db');
 
-// ✅ CREATE
+// CREATE
 exports.createAnnouncement = (req, res) => {
     const { title, body, type } = req.body;
     const adminId = req.userId;
 
+    console.log("ADMIN ID:", adminId); // 🔥 DEBUG
+
     let mediaUrl = null;
     if (req.file) {
         mediaUrl = `/uploads/${req.file.filename}`;
+    }
+
+    if (!title || !body) {
+        return res.status(400).json({ message: 'Title and body required' });
     }
 
     db.run(
@@ -15,7 +21,7 @@ exports.createAnnouncement = (req, res) => {
         [adminId, type || 'text', title, body, mediaUrl],
         function (err) {
             if (err) {
-                console.error("INSERT ERROR:", err);
+                console.error("❌ DB ERROR:", err);
                 return res.status(500).json({ message: err.message });
             }
 
@@ -24,23 +30,23 @@ exports.createAnnouncement = (req, res) => {
     );
 };
 
-// ✅ GET ALL
+// GET
 exports.getAllAnnouncements = (req, res) => {
     db.all(
         'SELECT * FROM announcements ORDER BY created_at DESC',
         [],
         (err, rows) => {
             if (err) {
-                console.error("FETCH ERROR:", err);
+                console.error(err);
                 return res.status(500).json({ message: err.message });
             }
 
-            res.json(rows); // ✅ MUST be array
+            res.json(rows);
         }
     );
 };
 
-// ✅ DELETE
+// DELETE
 exports.deleteAnnouncement = (req, res) => {
     const { id } = req.params;
 
@@ -49,7 +55,7 @@ exports.deleteAnnouncement = (req, res) => {
         [id],
         function (err) {
             if (err) {
-                console.error("DELETE ERROR:", err);
+                console.error(err);
                 return res.status(500).json({ message: err.message });
             }
 
