@@ -51,8 +51,10 @@ exports.updateComplaintStatus = (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
+    console.log("👉 UPDATE HIT:", { id, status, user: req.userId });
+
     if (!id || !status) {
-        return res.status(400).json({ message: 'Missing data' });
+        return res.status(400).json({ message: 'Missing id or status' });
     }
 
     db.run(
@@ -60,9 +62,11 @@ exports.updateComplaintStatus = (req, res) => {
         [status, id],
         function (err) {
             if (err) {
-                console.error("❌ UPDATE ERROR:", err);
+                console.error("❌ DB ERROR:", err.message);
                 return res.status(500).json({ message: err.message });
             }
+
+            console.log("✅ UPDATED ROWS:", this.changes);
 
             res.json({ message: 'Updated successfully' });
         }
