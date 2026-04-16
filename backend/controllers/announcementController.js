@@ -2,7 +2,7 @@ const db = require('../config/db');
 
 exports.createAnnouncement = (req, res) => {
     const { title, body, type } = req.body;
-    const adminId = req.userId;
+    const adminId = req.user.id ;
 
     let mediaUrl = null;
     if (req.file) {
