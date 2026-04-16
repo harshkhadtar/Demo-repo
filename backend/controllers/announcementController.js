@@ -32,14 +32,21 @@ exports.createAnnouncement = (req, res) => {
 
 // GET
 exports.getAllAnnouncements = (req, res) => {
+    console.log("🔥 GET ANNOUNCEMENTS HIT");
+
     db.all(
-  'SELECT * FROM announcements ORDER BY created_at DESC',
-  [],
-  (err, rows) => {
-    if (err) return res.status(500).json({ message: err.message });
-    res.json(rows);
-  }
-);
+        'SELECT * FROM announcements ORDER BY created_at DESC',
+        [],
+        (err, rows) => {
+            if (err) {
+                console.error("❌ ANN FETCH ERROR:", err); // 👈 THIS IS KEY
+                return res.status(500).json({ error: err.message });
+            }
+
+            console.log("✅ DATA:", rows);
+            res.json(rows);
+        }
+    );
 };
 
 // DELETE
