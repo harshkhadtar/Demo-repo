@@ -10,23 +10,16 @@ exports.createAnnouncement = (req, res) => {
         mediaUrl = `/uploads/${req.file.filename}`;
     }
 
-    if (!title || !body) {
-        return res.status(400).json({ message: 'Title and body required' });
-    }
-
     db.run(
         'INSERT INTO announcements (admin_id, type, title, body, media_url) VALUES (?, ?, ?, ?, ?)',
         [adminId, type || 'text', title, body, mediaUrl],
         function (err) {
             if (err) {
-                console.error("❌ INSERT ERROR:", err);
+                console.error("INSERT ERROR:", err);
                 return res.status(500).json({ message: err.message });
             }
 
-            res.json({
-                message: 'Announcement created',
-                id: this.lastID
-            });
+            res.json({ message: 'Created', id: this.lastID });
         }
     );
 };
@@ -38,11 +31,11 @@ exports.getAllAnnouncements = (req, res) => {
         [],
         (err, rows) => {
             if (err) {
-                console.error(err);
+                console.error("FETCH ERROR:", err);
                 return res.status(500).json({ message: err.message });
             }
 
-            res.json(rows);
+            res.json(rows); // ✅ MUST be array
         }
     );
 };
@@ -56,11 +49,11 @@ exports.deleteAnnouncement = (req, res) => {
         [id],
         function (err) {
             if (err) {
-                console.error(err);
+                console.error("DELETE ERROR:", err);
                 return res.status(500).json({ message: err.message });
             }
 
-            res.json({ message: 'Deleted successfully' });
+            res.json({ message: 'Deleted' });
         }
     );
 };
