@@ -35,14 +35,12 @@ exports.getMyComplaints = (req, res) => {
     const userId = req.userId;
 
     db.all(
-        'SELECT * FROM complaints WHERE user_id = ? ORDER BY created_at DESC',
+        'SELECT * FROM complaints WHERE user_id = ?',
         [userId],
         (err, rows) => {
-            console.log("🔥 DB RESULT:", rows); // 👈 ADD THIS
+            console.log("DB DATA:", rows); // 🔥 DEBUG
 
-            if (err) {
-                return res.status(500).json({ message: err.message });
-            }
+            if (err) return res.status(500).json({ message: err.message });
 
             res.json(rows);
         }
