@@ -74,6 +74,10 @@ exports.updateComplaintStatus = (req, res) => {
     console.log("👉 ID:", id);
     console.log("👉 STATUS:", status);
 
+    console.log("👉 PATCH HIT");
+console.log("BODY:", req.body);
+console.log("PARAM:", req.params);
+    
     db.run(
         'UPDATE complaints SET status = ? WHERE id = ?',
         [status, id],
