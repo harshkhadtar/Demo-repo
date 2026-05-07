@@ -63,12 +63,7 @@
         </div>
       </div>
       <div class="hero-visual">
-        <div class="hero-illustration">
-          <div class="hero-illustration-inner">
-            <span class="material-symbols-outlined">location_city</span>
-            <p>Lonere Grampanchayat</p>
-          </div>
-        </div>
+        <img src="gp.jpg.jpeg" alt="Lonere Grampanchayat" class="hero-image">
       </div>
     </section>
 
@@ -167,15 +162,43 @@
           return;
         }
         const badgeMap = { 'Pending':'badge-pending','In Progress':'badge-progress','Completed':'badge-done','Rejected':'badge-rejected' };
-        container.innerHTML = list.map(c => `
-          <div class="complaint-item">
-            <div class="complaint-icon"><span class="material-symbols-outlined">report_problem</span></div>
-            <div class="complaint-info">
-              <div class="complaint-title">${c.title}</div>
-              <div class="complaint-meta">${c.category} · ${c.location}</div>
+
+        container.innerHTML = list.map(c => {
+          const updatedTs = c.updated_at
+            ? `<span style="font-size:.75rem;color:#6b7280;">Resolved: ${new Date(c.updated_at).toLocaleString()}</span>`
+            : '';
+
+          // Completion proof block – only shown when status is Completed and image exists
+          const proofBlock = (c.status === 'Completed' && c.completion_image_url) ? `
+            <div style="margin-top:12px;border-radius:12px;overflow:hidden;border:2px solid #d1fae5;background:#f0fdf4;">
+              <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#d1fae5;">
+                <span class="material-symbols-outlined" style="font-size:16px;color:#065f46;">verified</span>
+                <span style="font-size:.8125rem;font-weight:700;color:#065f46;">Work Completed – Proof Attached</span>
+                ${updatedTs}
+              </div>
+              <img src="http://localhost:5000${c.completion_image_url}"
+                   alt="Completion proof"
+                   style="width:100%;max-height:220px;object-fit:cover;display:block;"
+                   onerror="this.style.display='none'">
+              <div style="padding:6px 12px 8px;font-size:.8rem;color:#047857;">
+                <span class="material-symbols-outlined" style="font-size:13px;vertical-align:middle;">photo_camera</span>
+                Photo submitted by Gram Panchayat admin as work completion proof.
+              </div>
+            </div>` : '';
+
+          return `
+          <div class="complaint-item" style="flex-direction:column;align-items:flex-start;gap:8px;padding:14px 0;">
+            <div style="display:flex;align-items:center;gap:12px;width:100%;">
+              <div class="complaint-icon"><span class="material-symbols-outlined">report_problem</span></div>
+              <div class="complaint-info" style="flex:1;">
+                <div class="complaint-title">${c.title}</div>
+                <div class="complaint-meta">${c.category} · ${c.location}</div>
+              </div>
+              <span class="badge ${badgeMap[c.status] || 'badge-pending'}">${c.status}</span>
             </div>
-            <span class="badge ${badgeMap[c.status] || 'badge-pending'}">${c.status}</span>
-          </div>`).join('');
+            ${proofBlock}
+          </div>`;
+        }).join('');
       } catch(e) { console.error(e); }
     }
   </script>

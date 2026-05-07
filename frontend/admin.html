@@ -8,33 +8,270 @@
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
     <style>
+        /* ── Table ── */
         .admin-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 16px;
+            font-size: .875rem;
         }
-
         .admin-table th,
         .admin-table td {
             border-bottom: 1px solid var(--md-sys-color-outline-variant);
             padding: 12px 16px;
             text-align: left;
+            vertical-align: middle;
         }
-
         .admin-table th {
             background-color: var(--md-sys-color-surface-variant);
             color: var(--md-sys-color-on-surface-variant);
-            font-weight: 500;
-            font-size: 0.875rem;
+            font-weight: 600;
+            font-size: .8125rem;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+        .admin-table tr:hover td { background-color: rgba(var(--primary-rgb, 37,99,235),.04); }
+
+        /* ── Status Select ── */
+        .status-select {
+            padding: 5px 10px;
+            border-radius: 6px;
+            border: 1.5px solid var(--md-sys-color-outline-variant);
+            font-size: .8125rem;
+            cursor: pointer;
+            background: var(--md-sys-color-surface);
+            color: var(--md-sys-color-on-surface);
+            min-width: 130px;
+        }
+        .status-select:focus { outline: none; border-color: var(--primary); }
+
+        /* ── Modal Overlay ── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.55);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            backdrop-filter: blur(3px);
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-box {
+            background: var(--md-sys-color-surface, #fff);
+            border-radius: 20px;
+            padding: 32px 28px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 24px 60px rgba(0,0,0,.25);
+            animation: modalIn .25s ease;
+        }
+        @keyframes modalIn {
+            from { opacity:0; transform: translateY(24px) scale(.97); }
+            to   { opacity:1; transform: translateY(0)    scale(1); }
+        }
+        .modal-box h3 {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .modal-box .modal-icon {
+            width: 40px; height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #059669, #34D399);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .modal-box .modal-icon .material-symbols-outlined { color: #fff; font-size: 22px; }
+        .modal-subtitle {
+            font-size: .875rem;
+            color: var(--text-2, #6b7280);
+            margin-bottom: 20px;
+            padding-left: 50px;
         }
 
-        .admin-table tr:hover {
-            background-color: var(--md-sys-color-surface-variant);
+        /* ── Upload Zone inside Modal ── */
+        .upload-zone {
+            border: 2.5px dashed #d1d5db;
+            border-radius: 14px;
+            padding: 28px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all .2s;
+            background: #f9fafb;
+            position: relative;
         }
+        .upload-zone:hover,
+        .upload-zone.dragover {
+            border-color: var(--primary, #2563eb);
+            background: rgba(37,99,235,.04);
+        }
+        .upload-zone .uz-icon {
+            width: 56px; height: 56px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #059669, #34D399);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 12px;
+        }
+        .upload-zone .uz-icon .material-symbols-outlined { color: #fff; font-size: 28px; }
+        .upload-zone p { font-weight: 600; color: var(--text-1, #111); margin-bottom: 4px; }
+        .upload-zone small { color: var(--text-2, #6b7280); font-size: .8rem; }
+        #modal-proof-input { display: none; }
+
+        /* Preview inside modal */
+        #modal-proof-preview {
+            display: none;
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-top: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,.12);
+        }
+        .proof-filename {
+            display: none;
+            font-size: .8125rem;
+            color: #059669;
+            font-weight: 600;
+            margin-top: 10px;
+            gap: 6px;
+            align-items: center;
+        }
+        .proof-filename .material-symbols-outlined { font-size: 16px; }
+
+        /* Validation error hint */
+        .upload-err {
+            display: none;
+            font-size: .8rem;
+            color: #dc2626;
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: #fef2f2;
+            border-radius: 8px;
+            border-left: 3px solid #dc2626;
+        }
+
+        /* Modal Buttons */
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        .modal-actions button { flex: 1; }
+        .btn-cancel {
+            padding: 11px 18px;
+            border: 1.5px solid var(--md-sys-color-outline-variant, #d1d5db);
+            border-radius: 10px;
+            background: transparent;
+            font-size: .9rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-2, #6b7280);
+            transition: all .15s;
+        }
+        .btn-cancel:hover { background: #f3f4f6; }
+        .btn-confirm {
+            padding: 11px 18px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: #fff;
+            font-size: .9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: opacity .15s, transform .15s;
+        }
+        .btn-confirm:hover { opacity: .9; transform: translateY(-1px); }
+        .btn-confirm:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+        /* ── Toast ── */
+        .toast-container {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+            pointer-events: none;
+        }
+        .toast {
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: .875rem;
+            font-weight: 600;
+            color: #fff;
+            box-shadow: 0 8px 28px rgba(0,0,0,.2);
+            animation: toastIn .3s ease, toastOut .4s ease 2.6s forwards;
+            pointer-events: none;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .toast.success { background: linear-gradient(135deg, #059669, #10b981); }
+        .toast.error   { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        @keyframes toastIn  { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: translateY(0); } }
+        @keyframes toastOut { from { opacity:1; } to { opacity:0; } }
+
+        /* Completion proof badge in table */
+        .proof-badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: .75rem; font-weight: 600; padding: 3px 8px;
+            border-radius: 6px; background: #d1fae5; color: #065f46;
+            text-decoration: none; cursor: pointer;
+        }
+        .proof-badge .material-symbols-outlined { font-size: 13px; }
     </style>
 </head>
 
 <body>
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- ── COMPLETION PROOF MODAL ── -->
+    <div class="modal-overlay" id="completion-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-box">
+            <h3 id="modal-title">
+                <div class="modal-icon">
+                    <span class="material-symbols-outlined">verified</span>
+                </div>
+                Upload Completion Proof
+            </h3>
+            <p class="modal-subtitle">Attach a JPEG/PNG photo as proof that complaint <strong id="modal-complaint-id">#—</strong> has been resolved.</p>
+
+            <label for="modal-proof-input" class="upload-zone" id="modal-upload-zone">
+                <div class="uz-icon">
+                    <span class="material-symbols-outlined">add_photo_alternate</span>
+                </div>
+                <p>Click or drag &amp; drop</p>
+                <small>JPEG / PNG · Max 5 MB</small>
+            </label>
+            <input type="file" id="modal-proof-input" accept="image/jpeg,image/png">
+
+            <img id="modal-proof-preview" alt="Completion proof preview">
+            <div class="proof-filename" id="proof-filename">
+                <span class="material-symbols-outlined">check_circle</span>
+                <span id="proof-filename-text"></span>
+            </div>
+
+            <div class="upload-err" id="upload-err">
+                <strong>Image required!</strong> Please attach a JPEG/PNG photo as proof before confirming.
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" id="modal-cancel-btn" type="button">Cancel</button>
+                <button class="btn-confirm" id="modal-confirm-btn" type="button">
+                    <span class="material-symbols-outlined" style="font-size:18px;">check</span>
+                    Confirm Completed
+                </button>
+            </div>
+        </div>
+    </div>
+
     <header class="top-app-bar">
         <div class="app-bar-brand">
             <div class="app-bar-icon">
@@ -68,24 +305,19 @@
                     <canvas id="statusChart" width="400" height="200"></canvas>
                 </div>
                 <div class="md-card" style="display: flex; flex-direction: column; justify-content: center; gap: 16px;">
-                    <div
-                        style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--md-sys-color-outline-variant);">
+                    <div style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--md-sys-color-outline-variant);">
                         <span>Total Complaints</span> <strong id="stat-total">0</strong>
                     </div>
-                    <div
-                        style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--md-sys-color-outline-variant); color: #E65100;">
+                    <div style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--md-sys-color-outline-variant); color: #E65100;">
                         <span>Pending</span> <strong id="stat-pending">0</strong>
                     </div>
-                    <div
-                        style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--md-sys-color-outline-variant); color: #1565C0;">
+                    <div style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--md-sys-color-outline-variant); color: #1565C0;">
                         <span>In Progress</span> <strong id="stat-inprogress">0</strong>
                     </div>
-                    <div
-                        style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--md-sys-color-outline-variant); color: #2E7D32;">
+                    <div style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--md-sys-color-outline-variant); color: #2E7D32;">
                         <span>Completed</span> <strong id="stat-completed">0</strong>
                     </div>
-                    <div
-                        style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--md-sys-color-outline-variant); color: #C62828;">
+                    <div style="display: flex; justify-content: space-between; padding-bottom: 8px; border-bottom: 1px solid var(--md-sys-color-outline-variant); color: #C62828;">
                         <span>Rejected</span> <strong id="stat-rejected">0</strong>
                     </div>
                 </div>
@@ -103,6 +335,7 @@
                             <th>Title / Category</th>
                             <th>Location</th>
                             <th>Status</th>
+                            <th>Proof</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -165,11 +398,12 @@
     <script>
         let statusChartInstance = null;
 
+        // ── Auth guard ──────────────────────────────────────────────────────────
         document.addEventListener('DOMContentLoaded', () => {
             const user = JSON.parse(localStorage.getItem('user'));
             if (!user || user.role !== 'admin') {
-                alert('Unauthorized access.');
-                window.location.href = 'index.html';
+                showToast('Unauthorized access.', 'error');
+                setTimeout(() => window.location.href = 'index.html', 1500);
                 return;
             }
             loadAllComplaints();
@@ -182,6 +416,18 @@
             });
         });
 
+        // ── Toast ───────────────────────────────────────────────────────────────
+        function showToast(msg, type = 'success') {
+            const tc = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const icon = type === 'success' ? 'check_circle' : 'error';
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<span class="material-symbols-outlined" style="font-size:18px;">${icon}</span>${msg}`;
+            tc.appendChild(toast);
+            setTimeout(() => toast.remove(), 3100);
+        }
+
+        // ── Load All Complaints ─────────────────────────────────────────────────
         async function loadAllComplaints() {
             try {
                 const response = await fetch('http://localhost:5000/api/complaints/all', {
@@ -195,34 +441,51 @@
                 tbody.innerHTML = '';
 
                 complaints.forEach(c => {
-                    let statusClass = 'pending';
-                    if (c.status === 'Pending') pending++;
-                    if (c.status === 'In Progress') { statusClass = 'in-progress'; inprogress++; }
-                    if (c.status === 'Completed') { statusClass = 'completed'; completed++; }
-                    if (c.status === 'Rejected') { statusClass = 'rejected'; rejected++; }
+                    if (c.status === 'Pending')     { pending++;    }
+                    if (c.status === 'In Progress') { inprogress++; }
+                    if (c.status === 'Completed')   { completed++;  }
+                    if (c.status === 'Rejected')    { rejected++;   }
+
+                    // Proof image cell
+                    let proofCell = '<span style="color:#9ca3af;font-size:.8rem;">—</span>';
+                    if (c.completion_image_url) {
+                        proofCell = `<a href="http://localhost:5000${c.completion_image_url}" target="_blank" class="proof-badge">
+                            <span class="material-symbols-outlined">image</span> View Proof
+                          </a>`;
+                    }
+
+                    // Complaint image cell
+                    let imgBtn = c.image_url
+                        ? `<a href="http://localhost:5000${c.image_url}" target="_blank" class="btn-secondary" style="padding:4px 10px;font-size:11px;">Issue Photo</a>`
+                        : '';
 
                     tbody.innerHTML += `
             <tr>
-              <td>#${c.id}</td>
-              <td>${c.user_name}<br><small>${c.user_email}</small></td>
-              <td><strong>${c.title}</strong><br><small>${c.category}</small></td>
+              <td><strong>#${c.id}</strong></td>
+              <td>${c.user_name}<br><small style="color:#6b7280;">${c.user_email}</small></td>
+              <td><strong>${c.title}</strong><br><small style="color:#6b7280;">${c.category}</small></td>
               <td>${c.location}</td>
               <td>
-                <select onchange="updateStatus(${c.id}, this.value)" class="form-control" style="padding: 4px 8px;">
-                  <option value="Pending" ${c.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                <select id="status-select-${c.id}"
+                        onchange="handleStatusChange(${c.id}, this)"
+                        class="status-select">
+                  <option value="Pending"     ${c.status === 'Pending'     ? 'selected' : ''}>Pending</option>
                   <option value="In Progress" ${c.status === 'In Progress' ? 'selected' : ''}>In Progress</option>
-                  <option value="Completed" ${c.status === 'Completed' ? 'selected' : ''}>Completed</option>
-                  <option value="Rejected" ${c.status === 'Rejected' ? 'selected' : ''}>Rejected</option>
+                  <option value="Completed"   ${c.status === 'Completed'   ? 'selected' : ''}>Completed</option>
+                  <option value="Rejected"    ${c.status === 'Rejected'    ? 'selected' : ''}>Rejected</option>
                 </select>
               </td>
+              <td>${proofCell}</td>
               <td>
-                <div style="display: flex; gap: 8px;">
-                  <a href="${c.image_url ? 'http://localhost:5000' + c.image_url : '#'}" target="_blank" class="btn-secondary" style="padding: 4px 12px; font-size: 12px;">View Image</a>
-                  <button onclick="deleteComplaint(${c.id})" style="padding: 4px 12px; font-size: 12px; background-color: #C62828; color: white; border: none; border-radius: 4px; cursor: pointer;">Delete</button>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                  ${imgBtn}
+                  <button onclick="deleteComplaint(${c.id})"
+                    style="padding:4px 10px;font-size:11px;background:#C62828;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">
+                    Delete
+                  </button>
                 </div>
               </td>
-            </tr>
-          `;
+            </tr>`;
                 });
 
                 document.getElementById('stat-total').textContent = complaints.length;
@@ -235,14 +498,14 @@
 
             } catch (error) {
                 console.error(error);
+                showToast('Failed to load complaints', 'error');
             }
         }
 
+        // ── Chart ───────────────────────────────────────────────────────────────
         function updateChart(pending, inprogress, completed, rejected) {
             const ctx = document.getElementById('statusChart').getContext('2d');
-            if (statusChartInstance) {
-                statusChartInstance.destroy();
-            }
+            if (statusChartInstance) statusChartInstance.destroy();
             statusChartInstance = new Chart(ctx, {
                 type: 'pie',
                 data: {
@@ -254,50 +517,168 @@
                 }
             });
         }
-        async function updateStatus(id, newStatus) {
-            if (!confirm('Change status to ' + newStatus + '?')) return loadAllComplaints();
 
-            try {
-                const res = await fetch(`http://localhost:5000/api/complaints/${id}/status`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + localStorage.getItem('token')
-                    },
-                    body: JSON.stringify({ status: newStatus })
-                });
-                if (res.ok) {
-                    alert('Status updated');
-                } else {
-                    alert('Failed to update status');
-                    loadAllComplaints();
+        // ── Status Change Handler ───────────────────────────────────────────────
+        // Intercepts "Completed" to show the proof-upload modal first
+        function handleStatusChange(id, selectEl) {
+            const newStatus = selectEl.value;
+            if (newStatus === 'Completed') {
+                openCompletionModal(id, selectEl);
+            } else {
+                if (!confirm(`Change status to "${newStatus}"?`)) {
+                    loadAllComplaints(); // revert UI
+                    return;
                 }
-            } catch (err) {
-                console.error(err);
+                updateStatus(id, newStatus, null);
             }
         }
 
+        // ── Completion Modal ────────────────────────────────────────────────────
+        let _pendingComplaintId = null;
+        let _pendingSelectEl    = null;
+
+        function openCompletionModal(id, selectEl) {
+            _pendingComplaintId = id;
+            _pendingSelectEl    = selectEl;
+
+            document.getElementById('modal-complaint-id').textContent = '#' + id;
+            document.getElementById('modal-proof-input').value = '';
+            document.getElementById('modal-proof-preview').style.display = 'none';
+            document.getElementById('modal-proof-preview').src = '';
+            document.getElementById('proof-filename').style.display = 'none';
+            document.getElementById('upload-err').style.display = 'none';
+            document.getElementById('modal-upload-zone').style.borderColor = '#d1d5db';
+            document.getElementById('modal-upload-zone').style.background = '#f9fafb';
+
+            document.getElementById('completion-modal').classList.add('open');
+        }
+
+        function closeCompletionModal(revertSelect = true) {
+            document.getElementById('completion-modal').classList.remove('open');
+            if (revertSelect && _pendingSelectEl) {
+                // Revert the select dropdown back to previous value by reloading
+                loadAllComplaints();
+            }
+            _pendingComplaintId = null;
+            _pendingSelectEl    = null;
+        }
+
+        // Modal — cancel
+        document.getElementById('modal-cancel-btn').addEventListener('click', () => closeCompletionModal(true));
+        // Close on overlay click
+        document.getElementById('completion-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeCompletionModal(true);
+        });
+
+        // Modal — file input change
+        document.getElementById('modal-proof-input').addEventListener('change', function() {
+            const file = this.files[0];
+            if (!file) return;
+
+            const preview = document.getElementById('modal-proof-preview');
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = 'block';
+
+            const fnEl = document.getElementById('proof-filename');
+            document.getElementById('proof-filename-text').textContent = file.name;
+            fnEl.style.display = 'flex';
+
+            document.getElementById('upload-err').style.display = 'none';
+            document.getElementById('modal-upload-zone').style.borderColor = '#059669';
+            document.getElementById('modal-upload-zone').style.background = 'rgba(5,150,105,.04)';
+        });
+
+        // Modal — drag over / drop on upload zone
+        const modalZone = document.getElementById('modal-upload-zone');
+        modalZone.addEventListener('dragover', e => {
+            e.preventDefault();
+            modalZone.classList.add('dragover');
+        });
+        modalZone.addEventListener('dragleave', () => modalZone.classList.remove('dragover'));
+        modalZone.addEventListener('drop', e => {
+            e.preventDefault();
+            modalZone.classList.remove('dragover');
+            const input = document.getElementById('modal-proof-input');
+            if (e.dataTransfer.files.length) {
+                input.files = e.dataTransfer.files;
+                input.dispatchEvent(new Event('change'));
+            }
+        });
+
+        // Modal — confirm button
+        document.getElementById('modal-confirm-btn').addEventListener('click', async () => {
+            const file = document.getElementById('modal-proof-input').files[0];
+            if (!file) {
+                document.getElementById('upload-err').style.display = 'block';
+                document.getElementById('modal-upload-zone').style.borderColor = '#dc2626';
+                return;
+            }
+
+            const btn = document.getElementById('modal-confirm-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;animation:spin 1s linear infinite">sync</span> Uploading…';
+
+            const success = await updateStatus(_pendingComplaintId, 'Completed', file);
+            btn.disabled = false;
+            btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;">check</span> Confirm Completed';
+
+            if (success) closeCompletionModal(false);
+        });
+
+        // ── Update Status API Call ──────────────────────────────────────────────
+        async function updateStatus(id, newStatus, proofFile) {
+            try {
+                const formData = new FormData();
+                formData.append('status', newStatus);
+                if (proofFile) formData.append('completion_image', proofFile);
+
+                const res = await fetch(`http://localhost:5000/api/complaints/${id}/status`, {
+                    method: 'PATCH',
+                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
+                    body: formData
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    showToast(newStatus === 'Completed'
+                        ? '✅ Marked as Completed with proof!'
+                        : 'Status updated to ' + newStatus, 'success');
+                    loadAllComplaints();
+                    return true;
+                } else {
+                    showToast(data.message || 'Failed to update status', 'error');
+                    loadAllComplaints();
+                    return false;
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Network error. Please try again.', 'error');
+                loadAllComplaints();
+                return false;
+            }
+        }
+
+        // ── Delete Complaint ────────────────────────────────────────────────────
         async function deleteComplaint(id) {
             if (!confirm('Are you sure you want to delete this complaint?')) return;
-
             try {
                 const res = await fetch(`http://localhost:5000/api/complaints/${id}`, {
                     method: 'DELETE',
-                    headers: {
-                        'Authorization': 'Bearer ' + localStorage.getItem('token')
-                    }
+                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
                 });
                 if (res.ok) {
-                    alert('Complaint deleted successfully');
+                    showToast('Complaint deleted', 'success');
                     loadAllComplaints();
                 } else {
-                    alert('Failed to delete complaint');
+                    showToast('Failed to delete complaint', 'error');
                 }
             } catch (err) {
                 console.error(err);
+                showToast('Network error', 'error');
             }
         }
 
+        // ── Load Announcements ──────────────────────────────────────────────────
         async function loadAllAnnouncements() {
             try {
                 const response = await fetch('http://localhost:5000/api/announcements');
@@ -312,13 +693,12 @@
               <td><strong>${a.title}</strong></td>
               <td>${date}</td>
               <td>
-                ${a.media_url ? `<a href="http://localhost:5000${a.media_url}" target="_blank" class="btn-secondary" style="padding: 4px 12px; font-size: 12px;">View Image</a>` : 'No Image'}
+                ${a.media_url ? `<a href="http://localhost:5000${a.media_url}" target="_blank" class="btn-secondary" style="padding:4px 12px;font-size:12px;">View Image</a>` : 'No Image'}
               </td>
               <td>
-                <button onclick="deleteAnnouncementAdmin(${a.id})" style="padding: 4px 12px; font-size: 12px; background-color: #C62828; color: white; border: none; border-radius: 4px; cursor: pointer;">Delete</button>
+                <button onclick="deleteAnnouncementAdmin(${a.id})" style="padding:4px 12px;font-size:12px;background:#C62828;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:600;">Delete</button>
               </td>
-            </tr>
-          `;
+            </tr>`;
                 });
             } catch (err) {
                 console.error('Error loading announcements:', err);
@@ -333,16 +713,17 @@
                     headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
                 });
                 if (res.ok) {
-                    alert('Announcement deleted successfully');
+                    showToast('Announcement deleted', 'success');
                     loadAllAnnouncements();
                 } else {
-                    alert('Failed to delete announcement');
+                    showToast('Failed to delete announcement', 'error');
                 }
             } catch (err) {
                 console.error(err);
             }
         }
 
+        // ── Announcement image preview ──────────────────────────────────────────
         function previewImage(event) {
             const preview = document.getElementById('ann-image-preview');
             const file = event.target.files[0];
@@ -365,7 +746,6 @@
                 const formData = new FormData();
                 formData.append('title', title);
                 formData.append('body', body);
-
                 if (imageFile) {
                     formData.append('media', imageFile);
                     formData.append('type', 'image');
@@ -375,24 +755,27 @@
 
                 const res = await fetch('http://localhost:5000/api/announcements', {
                     method: 'POST',
-                    headers: {
-                        'Authorization': 'Bearer ' + localStorage.getItem('token')
-                    },
+                    headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') },
                     body: formData
                 });
 
                 if (res.ok) {
-                    alert('Announcement posted');
+                    showToast('Announcement posted!', 'success');
                     e.target.reset();
-                    const preview = document.getElementById('ann-image-preview');
-                    preview.src = '';
-                    preview.style.display = 'none';
+                    document.getElementById('ann-image-preview').style.display = 'none';
                     loadAllAnnouncements();
+                } else {
+                    showToast('Failed to post announcement', 'error');
                 }
             } catch (err) {
-                alert('Error posting announcement');
+                showToast('Error posting announcement', 'error');
             }
         });
+
+        /* Spin animation for loading indicator */
+        const style = document.createElement('style');
+        style.textContent = `@keyframes spin { to { transform: rotate(360deg); } }`;
+        document.head.appendChild(style);
     </script>
 </body>
 

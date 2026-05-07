@@ -60,8 +60,28 @@ exports.updateComplaintStatus = async (req, res) => {
         return res.status(400).json({ message: 'Invalid status' });
     }
 
+    // If marking as Completed, a proof image is required
+    if (status === 'Completed') {
+        if (!req.file) {
+            return res.status(400).json({
+                message: 'A completion proof image is required when marking as Completed.'
+            });
+        }
+    }
+
     try {
-        const result = db.prepare('UPDATE complaints SET status = ? WHERE id = ?').run(status, id);
+        let result;
+        if (status === 'Completed' && req.file) {
+            const completionImageUrl = `/uploads/${req.file.filename}`;
+            result = db.prepare(
+                'UPDATE complaints SET status = ?, completion_image_url = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?'
+            ).run(status, completionImageUrl, id);
+        } else {
+            result = db.prepare(
+                'UPDATE complaints SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?'
+            ).run(status, id);
+        }
+
         if (result.changes === 0) {
             return res.status(404).json({ message: 'Complaint not found.' });
         }

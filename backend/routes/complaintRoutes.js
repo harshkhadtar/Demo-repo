@@ -12,7 +12,8 @@ router.get('/my', verifyToken, complaintController.getMyComplaints);
 router.get('/all', complaintController.getAllComplaints);
 
 // Admin routes
-router.patch('/:id/status', verifyToken, isAdmin, complaintController.updateComplaintStatus);
+// PATCH /:id/status now accepts multipart/form-data so admin can upload completion proof image
+router.patch('/:id/status', verifyToken, isAdmin, upload.single('completion_image'), complaintController.updateComplaintStatus);
 router.delete('/:id', verifyToken, isAdmin, complaintController.deleteComplaint);
 
 module.exports = router;

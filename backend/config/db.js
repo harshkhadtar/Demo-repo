@@ -29,6 +29,8 @@ db.exec(`
     description TEXT NOT NULL,
     image_url TEXT,
     status TEXT DEFAULT 'Pending' CHECK(status IN ('Pending','Rejected','In Progress','Completed')),
+    completion_image_url TEXT,
+    updated_at DATETIME,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
   );
@@ -44,6 +46,15 @@ db.exec(`
     FOREIGN KEY (admin_id) REFERENCES users(id) ON DELETE CASCADE
   );
 `);
+
+// Migration: add new columns to existing databases (safe – errors are swallowed)
+const migrations = [
+    "ALTER TABLE complaints ADD COLUMN completion_image_url TEXT",
+    "ALTER TABLE complaints ADD COLUMN updated_at DATETIME"
+];
+migrations.forEach(sql => {
+    try { db.prepare(sql).run(); } catch (_) { /* column already exists */ }
+});
 
 // Seed default admin account if not exists (password: admin123)
 const existing = db.prepare('SELECT id FROM users WHERE email = ?').get('admin@lonere.gov');

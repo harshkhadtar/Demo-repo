@@ -12,13 +12,27 @@ const storage = multer.diskStorage({
         cb(null, uploadDir);
     },
     filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname));
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e6);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
     }
 });
 
+// Only allow JPEG and PNG
+const fileFilter = (req, file, cb) => {
+    const allowed = /jpeg|jpg|png/;
+    const extOk = allowed.test(path.extname(file.originalname).toLowerCase());
+    const mimeOk = allowed.test(file.mimetype);
+    if (extOk && mimeOk) {
+        cb(null, true);
+    } else {
+        cb(new Error('Only JPEG and PNG images are allowed.'));
+    }
+};
+
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    fileFilter: fileFilter
 });
 
 module.exports = upload;

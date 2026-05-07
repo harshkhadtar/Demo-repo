@@ -7,12 +7,12 @@
 
 :root {
   /* Brand */
-  --primary:         #4F46E5;
-  --primary-hover:   #4338CA;
-  --primary-light:   #818CF8;
-  --primary-glow:    rgba(79,70,229,0.20);
-  --primary-soft:    #EEF2FF;
-  --primary-dark:    #312E81;
+  --primary:         #10B981;
+  --primary-hover:   #059669;
+  --primary-light:   #34D399;
+  --primary-glow:    rgba(16,185,129,0.20);
+  --primary-soft:    #ECFDF5;
+  --primary-dark:    #065F46;
 
   /* Accent colours for cards */
   --teal:   #0D9488;
@@ -252,7 +252,7 @@ select#language-select {
   align-items: center;
   padding: 32px 0 16px;
 }
-.hero-text {}
+
 .hero-tag {
   display: inline-flex;
   align-items: center;
@@ -287,6 +287,19 @@ select#language-select {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.hero-image {
+  width: 100%;
+  max-width: 380px;
+  border-radius: var(--r-xl);
+  aspect-ratio: 1 / 0.85;
+  object-fit: cover;
+  box-shadow: var(--sh-lg);
+  transition: transform .3s var(--ease), box-shadow .3s var(--ease);
+}
+.hero-image:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0,0,0,.15);
 }
 .hero-illustration {
   width: 100%; max-width: 360px;

@@ -25,9 +25,9 @@ app.use('/api/complaints', complaintRoutes);
 app.use('/api/announcements', announcementRoutes);
 
 // Health check: test DB connection
-app.get('/api/test-db', async (req, res) => {
+app.get('/api/test-db', (req, res) => {
     try {
-        await db.query('SELECT 1');
+        db.prepare('SELECT 1').get();
         res.json({ status: 'OK', message: 'Database connected successfully!' });
     } catch (err) {
         res.status(500).json({ status: 'ERROR', error: err.message });

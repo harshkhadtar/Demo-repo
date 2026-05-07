@@ -73,7 +73,15 @@ const translations = {
         register_subtitle:  "Join thousands of citizens making a difference",
         btn_create_account: "Create Account",
         register_have_account: "Already have an account?",
-        abs : "Public Issue Analytics,"
+        abs :                "Public Issue Analytics",
+        analytics_subtitle:  "Live overview of all complaints reported in Lonere Grampanchayat.",
+        total_complaints:    "Total Complaints Raised",
+        status_pending:      "Pending",
+        status_in_progress:  "In Progress",
+        status_completed:    "Completed",
+        status_rejected:     "Rejected",
+        chart_status:        "Status Overview",
+        chart_category:      "Issues by Category",
     },
 
     mr: {
@@ -146,7 +154,15 @@ const translations = {
         register_subtitle:  "फरक घडवणाऱ्या हजारो नागरिकांमध्ये सामील व्हा",
         btn_create_account: "खाते तयार करा",
         register_have_account: "आधीच खाते आहे?",
-        abs :"सार्वजनिक समस्यांचे विश्लेषण",
+        abs:                 "सार्वजनिक समस्यांचे विश्लेषण",
+        analytics_subtitle:  "लोणेरे ग्रामपंचायतमधील सर्व तक्रारींचे थेट विहंगावलोकन.",
+        total_complaints:    "एकूण तक्रारी नोंदवल्या",
+        status_pending:      "प्रलंबित",
+        status_in_progress:  "प्रगतीपथावर",
+        status_completed:    "पूर्ण",
+        status_rejected:     "नाकारले",
+        chart_status:        "स्थिती आढावा",
+        chart_category:      "श्रेणीनुसार समस्या",
     }
 };
 
