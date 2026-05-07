@@ -252,7 +252,7 @@
       if (img) formData.append('image', img);
 
       try {
-        const res = await fetch('http://localhost:5000/api/complaints', {
+        const res = await fetch('https://demo-repo-9fgn.onrender.com/api/complaints', {
           method:'POST',
           headers:{ 'Authorization':'Bearer '+token },
           body: formData

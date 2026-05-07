@@ -1,3 +1,11 @@
+process.on('uncaughtException', err => {
+    console.error('💥 UNCAUGHT EXCEPTION:', err);
+});
+
+process.on('unhandledRejection', err => {
+    console.error('💥 UNHANDLED REJECTION:', err);
+});
+
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -25,13 +33,11 @@ app.use('/api/complaints', complaintRoutes);
 app.use('/api/announcements', announcementRoutes);
 
 // Health check: test DB connection
-app.get('/api/test-db', (req, res) => {
+app.get('/api/test-db', async (req, res) => {
     try {
-        db.prepare('SELECT 1').get();
+        await db.query('SELECT 1');
         res.json({ status: 'OK', message: 'Database connected successfully!' });
-    } catch (err) {
-        res.status(500).json({ status: 'ERROR', error: err.message });
-    }
+    });
 });
 
 // Error Handling Middleware

@@ -1,11 +1,9 @@
-// Main application logic
-
 async function loadMyComplaints() {
     const token = localStorage.getItem('token');
     if (!token) return;
 
     try {
-        const response = await fetch('http://localhost:5000/api/complaints/my', {
+        const response = await fetch('https://demo-repo-9fgn.onrender.com/api/complaints/my', {
             headers: {
                 'Authorization': 'Bearer ' + token
             }
@@ -29,7 +27,7 @@ async function loadMyComplaints() {
 
                     const cardHTML = `
             <div class="md-card">
-              ${c.image_url ? `<img src="http://localhost:5000${c.image_url}" alt="Complaint Image" style="border-radius: 8px; width: 100%; height: 140px; object-fit: cover;">` : ''}
+              ${c.image_url ? `<img src="https://demo-repo-9fgn.onrender.com${c.image_url}" alt="Complaint Image" style="border-radius: 8px; width: 100%; height: 140px; object-fit: cover;">` : ''}
               <div style="display: flex; justify-content: space-between; align-items: start;">
                 <div>
                   <h4 style="margin-bottom: 4px;">${c.title}</h4>
